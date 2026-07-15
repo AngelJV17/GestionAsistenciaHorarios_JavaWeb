@@ -1,0 +1,299 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Gestión de Sedes | Hospital Félix Mayorca Soto</ui:define>
+
+    <ui:define name="content">
+        <div class="module-page">
+
+            <section class="rounded-3 shadow p-4 mb-4 hero-banner">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-8">
+                        <h1 class="h2 fw-bold mb-2 text-white">
+                            <i class="fas fa-hospital me-2"></i>Gestión de Sedes
+                        </h1>
+                        <p class="mb-0 text-white opacity-85">
+                            Administre sedes, direcciones y datos de contacto institucionales.
+                        </p>
+                    </div>
+                    <div class="col-lg-4">
+                        <h:form styleClass="hero-actions justify-content-lg-end">
+                            <h:commandLink styleClass="hero-action-btn" action="#{sedesController.nuevaSede}">
+                                <i class="fas fa-hospital-user fs-4"></i>
+                                <span class="hero-action-btn__text">
+                                    <span class="hero-action-btn__title">Nueva Sede</span>
+                                    <span class="hero-action-btn__subtitle">Registrar local</span>
+                                </span>
+                            </h:commandLink>
+                        </h:form>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats-grid mb-4" aria-label="Resumen de sedes">
+                <article class="stat-card stat-card-primary bg-white shadow-sm">
+                    <span class="stat-label">Sedes registradas</span>
+                    <span class="stat-value">#{sedesController.totalSedes}</span>
+                    <span class="stat-trend trend-primary">Total actual</span>
+                </article>
+
+                <article class="stat-card stat-card-success bg-white shadow-sm">
+                    <span class="stat-label">Activas</span>
+                    <span class="stat-value">#{sedesController.totalActivas}</span>
+                    <span class="stat-trend trend-success">Operativas</span>
+                </article>
+
+                <article class="stat-card stat-card-danger bg-white shadow-sm">
+                    <span class="stat-label">Inactivas</span>
+                    <span class="stat-value">#{sedesController.totalInactivas}</span>
+                    <span class="stat-trend trend-danger">Sin operación</span>
+                </article>
+
+                <article class="stat-card stat-card-info bg-white shadow-sm">
+                    <span class="stat-label">Página actual</span>
+                    <span class="stat-value">#{sedesController.pagina}</span>
+                    <span class="stat-trend trend-info">Listado paginado</span>
+                </article>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-filter"></i>
+                    <div>
+                        <h3>Filtros de búsqueda</h3>
+                        <small class="text-muted">Filtre sedes por estado o coincidencia directa.</small>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <h:form id="filtrosSedesForm">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-5">
+                                <div class="form-floating">
+                                    <h:selectOneMenu id="filtroEstado" styleClass="form-select"
+                                                     value="#{sedesController.filtroEstado}">
+                                        <f:selectItem itemValue="todos" itemLabel="Todos" />
+                                        <f:selectItem itemValue="activo" itemLabel="Activo" />
+                                        <f:selectItem itemValue="inactivo" itemLabel="Inactivo" />
+                                    </h:selectOneMenu>
+                                    <h:outputLabel for="filtroEstado" value="Estado" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-5">
+                                <div class="form-floating">
+                                    <h:inputText id="busquedaSede"
+                                                 styleClass="form-control"
+                                                 value="#{sedesController.busqueda}"
+                                                 p:placeholder="Buscar sede..." />
+                                    <h:outputLabel for="busquedaSede" value="Buscar sede" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <h:commandLink styleClass="btn btn-primary btn-filter-submit w-100 d-flex align-items-center justify-content-center gap-2"
+                                               action="#{sedesController.filtrar}"
+                                               >
+                                    <i class="fas fa-filter"></i>
+                                    <span>Filtrar</span>
+                                </h:commandLink>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-building"></i>
+                    <div>
+                        <h3>Listado de sedes</h3>
+                        <small class="text-muted">Sedes registradas para operación y control administrativo.</small>
+                    </div>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 system-table">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th class="ps-4">Código</th>
+                                    <th>Nombre</th>
+                                    <th>Dirección</th>
+                                    <th>Teléfono</th>
+                                    <th>Activo</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ui:repeat value="#{sedesController.sedes}" var="sede">
+                                    <tr>
+                                        <td class="ps-4 fw-semibold">#{sede.codigo}</td>
+                                        <td>
+                                            <div class="fw-semibold">#{sede.nombre}</div>
+                                            <small class="text-muted">Sede institucional</small>
+                                        </td>
+                                        <td>#{empty sede.direccion ? 'Sin dirección registrada' : sede.direccion}</td>
+                                        <td>#{empty sede.telefono ? 'Sin teléfono' : sede.telefono}</td>
+                                        <td>
+                                            <span class="#{sede.activo ? 'badge approved' : 'badge rejected'}">
+                                                #{sede.activo ? 'Sí' : 'No'}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <h:form>
+                                                <div class="d-flex gap-1 justify-content-center">
+                                                    <h:commandLink styleClass="btn btn-sm btn-outline-primary"
+                                                                   title="Editar"
+                                                                   action="#{sedesController.editarSede(sede.id)}">
+                                                        <i class="fas fa-pen-to-square"></i>
+                                                    </h:commandLink>
+                                                    <h:commandLink styleClass="btn btn-sm btn-outline-danger"
+                                                                   title="#{sede.activo ? 'Desactivar' : 'Activar'}"
+                                                                   action="#{sedesController.cambiarEstado(sede.id)}">
+                                                        <i class="fas #{sede.activo ? 'fa-ban' : 'fa-check'}"></i>
+                                                    </h:commandLink>
+                                                </div>
+                                            </h:form>
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 px-4 py-3 border-top">
+                    <small class="text-muted">Página #{sedesController.pagina} de #{sedesController.totalPaginas}</small>
+                    <nav aria-label="Paginación de sedes">
+                        <h:form>
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item #{sedesController.pagina le 1 ? 'disabled' : ''}">
+                                    <h:commandLink styleClass="page-link" action="#{sedesController.paginaAnterior}">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </h:commandLink>
+                                </li>
+                                <ui:repeat value="#{sedesController.paginas}" var="pagina">
+                                    <li class="page-item #{pagina eq sedesController.pagina ? 'active' : ''}">
+                                        <h:commandLink styleClass="page-link" action="#{sedesController.irPagina(pagina)}">
+                                            #{pagina}
+                                        </h:commandLink>
+                                    </li>
+                                </ui:repeat>
+                                <li class="page-item #{sedesController.pagina ge sedesController.totalPaginas ? 'disabled' : ''}">
+                                    <h:commandLink styleClass="page-link" action="#{sedesController.paginaSiguiente}">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </h:commandLink>
+                                </li>
+                            </ul>
+                        </h:form>
+                    </nav>
+                </div>
+            </section>
+
+        </div>
+
+        <div class="modal fade" id="modalSede" tabindex="-1" aria-labelledby="modalSedeLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                    <h:form id="formSede">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="modalSedeLabel">
+                                <i class="fas fa-hospital me-2"></i>
+                                #{empty sedesController.sedeSeleccionada.id ? 'Nueva Sede' : 'Editar Sede'}
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputText id="codigoSede"
+                                                     styleClass="form-control"
+                                                     required="true"
+                                                     value="#{sedesController.sedeSeleccionada.codigo}"
+                                                     readonly="true"
+                                                     p:placeholder="Código" />
+                                        <h:outputLabel for="codigoSede" value="Código" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputText id="nombreSede"
+                                                     styleClass="form-control"
+                                                     required="true"
+                                                     requiredMessage="Ingrese el nombre de la sede."
+                                                     value="#{sedesController.sedeSeleccionada.nombre}"
+                                                     p:placeholder="Nombre">
+                                            <f:validateLength minimum="3" maximum="150" />
+                                        </h:inputText>
+                                        <h:outputLabel for="nombreSede" value="Nombre de la sede" />
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <h:inputText id="direccion"
+                                                     styleClass="form-control"
+                                                     value="#{sedesController.sedeSeleccionada.direccion}"
+                                                     p:placeholder="Dirección" />
+                                        <h:outputLabel for="direccion" value="Dirección" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputText id="telefono"
+                                                     styleClass="form-control"
+                                                     value="#{sedesController.sedeSeleccionada.telefono}"
+                                                     p:placeholder="Teléfono" >
+                                            <f:validateRegex pattern="^[0-9+()\\-\\s]{0,20}$" />
+                                        </h:inputText>
+                                        <h:outputLabel for="telefono" value="Teléfono" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:selectOneMenu id="activo" styleClass="form-select"
+                                                         value="#{sedesController.sedeSeleccionada.activo}">
+                                            <f:selectItem itemValue="true" itemLabel="Activo" />
+                                            <f:selectItem itemValue="false" itemLabel="Inactivo" />
+                                        </h:selectOneMenu>
+                                        <h:outputLabel for="activo" value="Estado" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <h:commandButton styleClass="btn btn-primary"
+                                             action="#{sedesController.guardarSede}"
+                                             value="Guardar Sede" />
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+        <h:panelGroup rendered="#{sedesController.mostrarModal}">
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const modalElement = document.getElementById('modalSede');
+                    if (modalElement &amp;&amp; window.bootstrap) {
+                        new bootstrap.Modal(modalElement).show();
+                    }
+                });
+            </script>
+        </h:panelGroup>
+
+    </ui:define>
+</ui:composition>

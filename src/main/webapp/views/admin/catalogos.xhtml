@@ -1,0 +1,252 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Catálogos | Hospital Félix Mayorca Soto</ui:define>
+
+    <ui:define name="content">
+        <div class="module-page">
+            <section class="rounded-3 shadow p-4 mb-4 hero-banner">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-12">
+                        <h1 class="h2 fw-bold mb-2 text-white"><i class="fas fa-layer-group me-2"></i>Catálogos</h1>
+                        <p class="mb-0 text-white opacity-85">Administre datos maestros para cargos, áreas, especialidades, solicitudes y documentos.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats-grid mb-4" aria-label="Resumen de catálogo">
+                <article class="stat-card stat-card-primary bg-white shadow-sm">
+                    <span class="stat-label">Cargos</span>
+                    <span class="stat-value"><h:outputText value="#{catalogosController.listaCargos.size()}" /></span>
+                    <span class="stat-trend trend-primary">Registrados</span>
+                </article>
+                <article class="stat-card stat-card-success bg-white shadow-sm">
+                    <span class="stat-label">Áreas</span>
+                    <span class="stat-value"><h:outputText value="#{catalogosController.listaAreas.size()}" /></span>
+                    <span class="stat-trend trend-success">Registradas</span>
+                </article>
+                <article class="stat-card stat-card-warning bg-white shadow-sm">
+                    <span class="stat-label">Especialidades</span>
+                    <span class="stat-value"><h:outputText value="#{catalogosController.listaEspecialidades.size()}" /></span>
+                    <span class="stat-trend trend-warning">Registradas</span>
+                </article>
+                <article class="stat-card stat-card-danger bg-white shadow-sm">
+                    <span class="stat-label">Tipos</span>
+                    <span class="stat-value"><h:outputText value="#{catalogosController.listaTiposSolicitud.size() + catalogosController.listaTiposDocumento.size()}" /></span>
+                    <span class="stat-trend trend-danger">Solicitudes y documentos</span>
+                </article>
+            </section>
+
+            <h:messages globalOnly="true" styleClass="jsf-alert-source d-none" />
+
+            <div class="settings-container">
+                <aside class="settings-sidebar card-lift" aria-label="Catálogos disponibles">
+                    <div class="section-header mb-3">
+                        <span class="icon"><i class="fas fa-layer-group"></i></span>
+                        <div>
+                            <h3>Catálogos</h3>
+                            <small class="text-muted">Seleccione una categoría.</small>
+                        </div>
+                    </div>
+                    <ul class="settings-menu" role="tablist">
+                        <li><button class="settings-item active" data-section="cargos" type="button"><i class="fas fa-user-tie"></i><span>Cargos</span></button></li>
+                        <li><button class="settings-item" data-section="areas" type="button"><i class="fas fa-door-open"></i><span>Áreas</span></button></li>
+                        <li><button class="settings-item" data-section="especialidades" type="button"><i class="fas fa-stethoscope"></i><span>Especialidades</span></button></li>
+                        <li><button class="settings-item" data-section="tiposSolicitud" type="button"><i class="fas fa-file-alt"></i><span>Tipos de Solicitud</span></button></li>
+                        <li><button class="settings-item" data-section="tiposDocumento" type="button"><i class="fas fa-file-medical"></i><span>Tipos de Documento</span></button></li>
+                    </ul>
+                </aside>
+
+                <div class="settings-content card-lift">
+                    <section class="settings-section active" id="cargos-section">
+                        <div class="card__header px-4 pt-4">
+                            <i class="fas fa-user-tie"></i>
+                            <div>
+                                <h3>Cargos</h3>
+                                <small class="text-muted">Puestos y funciones reconocidas por la institución. Código generado automáticamente.</small>
+                            </div>
+                        </div>
+                        <h:form id="cargoForm" styleClass="px-4 pb-3">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-12 col-lg-7">
+                                    <h:outputLabel for="nombreCargo" value="Nombre" styleClass="form-label mb-1 small fw-semibold" />
+                                    <h:inputText id="nombreCargo" styleClass="form-control" value="#{catalogosController.cargoSeleccionado.nombre}" required="true" requiredMessage="Ingrese el nombre del cargo." validatorMessage="El nombre del cargo debe tener entre 3 y 100 caracteres." p:placeholder="Ingrese el nombre del cargo">
+                                        <f:validateLength minimum="3" maximum="100" />
+                                    </h:inputText>
+                                    <h:message for="nombreCargo" styleClass="text-danger small d-block mt-1" />
+                                </div>
+                                <div class="col-6 col-lg-2">
+                                    <h:outputLabel value="Estado" styleClass="form-label mb-1 small fw-semibold d-block" />
+                                    <div class="form-check form-switch mb-1">
+                                        <h:selectBooleanCheckbox id="activoCargo" styleClass="form-check-input" value="#{catalogosController.cargoSeleccionado.activo}" />
+                                        <h:outputLabel for="activoCargo" styleClass="form-check-label" value="Activo" />
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-3">
+                                    <div class="d-flex justify-content-lg-end gap-2 flex-nowrap">
+                                        <h:commandButton value="Guardar" styleClass="btn btn-primary btn--sm" action="#{catalogosController.guardarCargo}" />
+                                        <h:commandButton value="Limpiar" styleClass="btn btn-secondary btn--sm" action="#{catalogosController.nuevoCargo}" immediate="true" />
+                                    </div>
+                                </div>
+                            </div>
+                        </h:form>
+                        <ui:include src="/WEB-INF/fragments/catalogo-cargos-table.xhtml" />
+                    </section>
+
+                    <section class="settings-section" id="areas-section">
+                        <div class="card__header px-4 pt-4">
+                            <i class="fas fa-door-open"></i>
+                            <div>
+                                <h3>Áreas</h3>
+                                <small class="text-muted">Unidades operativas y administrativas del hospital. Código generado automáticamente.</small>
+                            </div>
+                        </div>
+                        <h:form id="areaForm" styleClass="px-4 pb-3">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-12 col-lg-7">
+                                    <h:outputLabel for="nombreArea" value="Nombre" styleClass="form-label mb-1 small fw-semibold" />
+                                    <h:inputText id="nombreArea" styleClass="form-control" value="#{catalogosController.areaSeleccionada.nombre}" required="true" requiredMessage="Ingrese el nombre del área." validatorMessage="El nombre del área debe tener entre 3 y 100 caracteres." p:placeholder="Ingrese el nombre del área">
+                                        <f:validateLength minimum="3" maximum="100" />
+                                    </h:inputText>
+                                    <h:message for="nombreArea" styleClass="text-danger small d-block mt-1" />
+                                </div>
+                                <div class="col-6 col-lg-2">
+                                    <h:outputLabel value="Estado" styleClass="form-label mb-1 small fw-semibold d-block" />
+                                    <div class="form-check form-switch mb-1">
+                                        <h:selectBooleanCheckbox id="activoArea" styleClass="form-check-input" value="#{catalogosController.areaSeleccionada.activo}" />
+                                        <h:outputLabel for="activoArea" styleClass="form-check-label" value="Activo" />
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-3">
+                                    <div class="d-flex justify-content-lg-end gap-2 flex-nowrap">
+                                        <h:commandButton value="Guardar" styleClass="btn btn-primary btn--sm" action="#{catalogosController.guardarArea}" />
+                                        <h:commandButton value="Limpiar" styleClass="btn btn-secondary btn--sm" action="#{catalogosController.nuevaArea}" immediate="true" />
+                                    </div>
+                                </div>
+                            </div>
+                        </h:form>
+                        <ui:include src="/WEB-INF/fragments/catalogo-areas-table.xhtml" />
+                    </section>
+
+                    <section class="settings-section" id="especialidades-section">
+                        <div class="card__header px-4 pt-4">
+                            <i class="fas fa-stethoscope"></i>
+                            <div>
+                                <h3>Especialidades</h3>
+                                <small class="text-muted">Ramas clínicas disponibles para el personal médico. Código generado automáticamente.</small>
+                            </div>
+                        </div>
+                        <h:form id="especialidadForm" styleClass="px-4 pb-3">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-12 col-lg-7">
+                                    <h:outputLabel for="nombreEspecialidad" value="Nombre" styleClass="form-label mb-1 small fw-semibold" />
+                                    <h:inputText id="nombreEspecialidad" styleClass="form-control" value="#{catalogosController.especialidadSeleccionada.nombre}" required="true" requiredMessage="Ingrese el nombre de la especialidad." validatorMessage="El nombre de la especialidad debe tener entre 3 y 100 caracteres." p:placeholder="Ingrese el nombre de la especialidad">
+                                        <f:validateLength minimum="3" maximum="100" />
+                                    </h:inputText>
+                                    <h:message for="nombreEspecialidad" styleClass="text-danger small d-block mt-1" />
+                                </div>
+                                <div class="col-6 col-lg-2">
+                                    <h:outputLabel value="Estado" styleClass="form-label mb-1 small fw-semibold d-block" />
+                                    <div class="form-check form-switch mb-1">
+                                        <h:selectBooleanCheckbox id="activoEspecialidad" styleClass="form-check-input" value="#{catalogosController.especialidadSeleccionada.activo}" />
+                                        <h:outputLabel for="activoEspecialidad" styleClass="form-check-label" value="Activo" />
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-3">
+                                    <div class="d-flex justify-content-lg-end gap-2 flex-nowrap">
+                                        <h:commandButton value="Guardar" styleClass="btn btn-primary btn--sm" action="#{catalogosController.guardarEspecialidad}" />
+                                        <h:commandButton value="Limpiar" styleClass="btn btn-secondary btn--sm" action="#{catalogosController.nuevaEspecialidad}" immediate="true" />
+                                    </div>
+                                </div>
+                            </div>
+                        </h:form>
+                        <ui:include src="/WEB-INF/fragments/catalogo-especialidades-table.xhtml" />
+                    </section>
+
+                    <section class="settings-section" id="tiposSolicitud-section">
+                        <div class="card__header px-4 pt-4">
+                            <i class="fas fa-file-alt"></i>
+                            <div>
+                                <h3>Tipos de Solicitud</h3>
+                                <small class="text-muted">Tipos de trámite disponibles para el personal. Código generado automáticamente.</small>
+                            </div>
+                        </div>
+                        <h:form id="tipoSolicitudForm" styleClass="px-4 pb-3">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-12 col-lg-5">
+                                    <h:outputLabel for="nombreTipoSolicitud" value="Nombre" styleClass="form-label mb-1 small fw-semibold" />
+                                    <h:inputText id="nombreTipoSolicitud" styleClass="form-control" value="#{catalogosController.tipoSolicitudSeleccionado.nombre}" required="true" requiredMessage="Ingrese el nombre del tipo de solicitud." validatorMessage="El nombre del tipo de solicitud debe tener entre 3 y 100 caracteres." p:placeholder="Ingrese el tipo de solicitud">
+                                        <f:validateLength minimum="3" maximum="100" />
+                                    </h:inputText>
+                                    <h:message for="nombreTipoSolicitud" styleClass="text-danger small d-block mt-1" />
+                                </div>
+                                <div class="col-6 col-lg-2">
+                                    <h:outputLabel value="Aprobación" styleClass="form-label mb-1 small fw-semibold d-block" />
+                                    <div class="form-check form-switch mb-1">
+                                        <h:selectBooleanCheckbox id="aprobacionTipoSolicitud" styleClass="form-check-input" value="#{catalogosController.tipoSolicitudSeleccionado.requiereAprobacion}" />
+                                        <h:outputLabel for="aprobacionTipoSolicitud" styleClass="form-check-label" value="Requiere" />
+                                    </div>
+                                </div>
+                                <div class="col-6 col-lg-2">
+                                    <h:outputLabel value="Estado" styleClass="form-label mb-1 small fw-semibold d-block" />
+                                    <div class="form-check form-switch mb-1">
+                                        <h:selectBooleanCheckbox id="activoTipoSolicitud" styleClass="form-check-input" value="#{catalogosController.tipoSolicitudSeleccionado.activo}" />
+                                        <h:outputLabel for="activoTipoSolicitud" styleClass="form-check-label" value="Activo" />
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-3">
+                                    <div class="d-flex justify-content-lg-end gap-2 flex-nowrap">
+                                        <h:commandButton value="Guardar" styleClass="btn btn-primary btn--sm" action="#{catalogosController.guardarTipoSolicitud}" />
+                                        <h:commandButton value="Limpiar" styleClass="btn btn-secondary btn--sm" action="#{catalogosController.nuevoTipoSolicitud}" immediate="true" />
+                                    </div>
+                                </div>
+                            </div>
+                        </h:form>
+                        <ui:include src="/WEB-INF/fragments/catalogo-tipos-solicitud-table.xhtml" />
+                    </section>
+
+                    <section class="settings-section" id="tiposDocumento-section">
+                        <div class="card__header px-4 pt-4">
+                            <i class="fas fa-file-medical"></i>
+                            <div>
+                                <h3>Tipos de Documento</h3>
+                                <small class="text-muted">Clasificación documental del sistema. Código generado automáticamente.</small>
+                            </div>
+                        </div>
+                        <h:form id="tipoDocumentoForm" styleClass="px-4 pb-3">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-12 col-lg-7">
+                                    <h:outputLabel for="nombreTipoDocumento" value="Nombre" styleClass="form-label mb-1 small fw-semibold" />
+                                    <h:inputText id="nombreTipoDocumento" styleClass="form-control" value="#{catalogosController.tipoDocumentoSeleccionado.nombre}" required="true" requiredMessage="Ingrese el nombre del tipo de documento." validatorMessage="El nombre del tipo de documento debe tener entre 3 y 100 caracteres." p:placeholder="Ingrese el tipo de documento">
+                                        <f:validateLength minimum="3" maximum="100" />
+                                    </h:inputText>
+                                    <h:message for="nombreTipoDocumento" styleClass="text-danger small d-block mt-1" />
+                                </div>
+                                <div class="col-6 col-lg-2">
+                                    <h:outputLabel value="Estado" styleClass="form-label mb-1 small fw-semibold d-block" />
+                                    <div class="form-check form-switch mb-1">
+                                        <h:selectBooleanCheckbox id="activoTipoDocumento" styleClass="form-check-input" value="#{catalogosController.tipoDocumentoSeleccionado.activo}" />
+                                        <h:outputLabel for="activoTipoDocumento" styleClass="form-check-label" value="Activo" />
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg-3">
+                                    <div class="d-flex justify-content-lg-end gap-2 flex-nowrap">
+                                        <h:commandButton value="Guardar" styleClass="btn btn-primary btn--sm" action="#{catalogosController.guardarTipoDocumento}" />
+                                        <h:commandButton value="Limpiar" styleClass="btn btn-secondary btn--sm" action="#{catalogosController.nuevoTipoDocumento}" immediate="true" />
+                                    </div>
+                                </div>
+                            </div>
+                        </h:form>
+                        <ui:include src="/WEB-INF/fragments/catalogo-tipos-documento-table.xhtml" />
+                    </section>
+                </div>
+            </div>
+        </div>
+        <h:outputScript library="js" name="settings.js" />
+    </ui:define>
+</ui:composition>

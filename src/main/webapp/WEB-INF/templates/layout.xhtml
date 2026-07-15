@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      lang="es">
+
+    <h:head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#0d47a1" />
+        <title><ui:insert name="title">Hospital Félix Mayorca Soto</ui:insert></title>
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+              rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+              rel="stylesheet" />
+        <h:outputStylesheet library="css" name="style.css" />
+
+        <ui:insert name="estilos_propios" />
+    </h:head>
+
+    <h:body>
+        <div id="pageLoader"
+             class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-white"
+             style="z-index: 9999;"
+             role="status"
+             aria-live="polite">
+            <div class="spinner-border text-primary" aria-hidden="true"></div>
+            <span class="visually-hidden">Cargando contenido del sistema...</span>
+        </div>
+
+        <ui:include src="/WEB-INF/templates/header.xhtml" />
+
+        <ui:fragment rendered="#{sessionScope.esAdmin eq true}">
+            <ui:include src="/WEB-INF/templates/navbar-admin.xhtml" />
+        </ui:fragment>
+        <ui:fragment rendered="#{sessionScope.esAdmin ne true}">
+            <ui:include src="/WEB-INF/templates/navbar.xhtml" />
+        </ui:fragment>
+
+        <main id="mainContent" class="container my-4 main-content" tabindex="-1">
+            <ui:insert name="content">
+                <p>Contenido principal por defecto.</p>
+            </ui:insert>
+        </main>
+
+        <h:messages globalOnly="true"
+                    showSummary="true"
+                    showDetail="true"
+                    styleClass="jsf-alert-source d-none" />
+
+        <ui:include src="/WEB-INF/templates/footer.xhtml" />
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <h:outputScript library="js" name="main.js" />
+    </h:body>
+</html>

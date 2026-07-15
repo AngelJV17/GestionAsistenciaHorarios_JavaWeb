@@ -1,0 +1,558 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Roles y Permisos | Hospital Félix Mayorca Soto</ui:define>
+
+    <ui:define name="content">
+        <div class="module-page">
+            <section class="rounded-3 shadow p-4 mb-4 hero-banner">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-8">
+                        <h1 class="h2 fw-bold mb-2 text-white">
+                            <i class="fas fa-user-shield me-2"></i>Roles y Permisos
+                        </h1>
+                        <p class="mb-0 text-white opacity-85">Administre roles, permisos y accesos funcionales de los usuarios del sistema.</p>
+                    </div>
+                    <div class="col-lg-4">
+                        <h:form styleClass="hero-actions justify-content-lg-end">
+                            <h:commandLink action="#{rolesPermisosController.nuevoRol}" styleClass="hero-action-btn">
+                                <i class="fas fa-user-tag fs-4"></i>
+                                <span class="hero-action-btn__text">
+                                    <span class="hero-action-btn__title">Nuevo Rol</span>
+                                    <span class="hero-action-btn__subtitle">Registrar perfil</span>
+                                </span>
+                            </h:commandLink>
+                        </h:form>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats-grid mb-4" aria-label="Resumen de roles y permisos">
+                <article class="stat-card stat-card-primary bg-white shadow-sm">
+                    <span class="stat-label">Roles activos</span>
+                    <span class="stat-value">
+                        <h:outputText value="#{rolesPermisosController.totalRolesActivos}" />
+                    </span>
+                    <span class="stat-trend trend-primary">Configurados</span>
+                </article>
+
+                <article class="stat-card stat-card-success bg-white shadow-sm">
+                    <span class="stat-label">Permisos</span>
+                    <span class="stat-value">
+                        <h:outputText value="#{rolesPermisosController.totalPermisos}" />
+                    </span>
+                    <span class="stat-trend trend-success">Disponibles</span>
+                </article>
+
+                <article class="stat-card stat-card-info bg-white shadow-sm">
+                    <span class="stat-label">Módulos</span>
+                    <span class="stat-value">
+                        <h:outputText value="#{rolesPermisosController.totalModulos}" />
+                    </span>
+                    <span class="stat-trend trend-info">Con acceso</span>
+                </article>
+
+                <article class="stat-card stat-card-warning bg-white shadow-sm">
+                    <span class="stat-label">Asignaciones</span>
+                    <span class="stat-value">
+                        <h:outputText value="#{rolesPermisosController.totalAsignaciones}" />
+                    </span>
+                    <span class="stat-trend trend-warning">Rol-permiso</span>
+                </article>
+            </section>
+
+            <h:messages globalOnly="true" styleClass="jsf-alert-source d-none" />
+
+            <div class="settings-container">
+                <aside class="settings-sidebar card-lift" aria-label="Secciones de roles y permisos">
+                    <div class="section-header mb-3">
+                        <span class="icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </span>
+                        <div>
+                            <h3>Seguridad</h3>
+                            <small class="text-muted">Configure accesos del sistema.</small>
+                        </div>
+                    </div>
+
+                    <ul class="settings-menu" role="tablist">
+                        <li>
+                            <button class="settings-item active" data-section="roles" type="button">
+                                <i class="fas fa-user-tag"></i>
+                                <span>Roles</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="settings-item" data-section="permisos" type="button">
+                                <i class="fas fa-lock"></i>
+                                <span>Permisos por rol</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="settings-item" data-section="usuarios" type="button">
+                                <i class="fas fa-user-check"></i>
+                                <span>Roles por usuario</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="settings-item" data-section="asignaciones" type="button">
+                                <i class="fas fa-link"></i>
+                                <span>Asignaciones</span>
+                            </button>
+                        </li>
+                    </ul>
+                </aside>
+
+                <div class="settings-content card-lift">
+                    <section class="settings-section active" id="roles-section">
+                        <div class="card__header">
+                            <i class="fas fa-user-tag"></i>
+                            <div>
+                                <h3>Roles del sistema</h3>
+                                <small class="text-muted">Perfiles de acceso disponibles para usuarios administrativos y asistenciales.</small>
+                            </div>
+                        </div>
+
+                        <div class="details-grid mb-4">
+                            <div class="detail-card">
+                                <h4>Administración de roles</h4>
+                                <div class="detail-item">
+                                    <span>Total de roles</span>
+                                    <span><h:outputText value="#{rolesPermisosController.totalRoles}" /></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span>Roles activos</span>
+                                    <span><h:outputText value="#{rolesPermisosController.totalRolesActivos}" /></span>
+                                </div>
+                            </div>
+
+                            <div class="detail-card">
+                                <h4>Control de acceso</h4>
+                                <div class="detail-item">
+                                    <span>Permisos registrados</span>
+                                    <span><h:outputText value="#{rolesPermisosController.totalPermisos}" /></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span>Módulos configurados</span>
+                                    <span><h:outputText value="#{rolesPermisosController.totalModulos}" /></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+                            <div>
+                                <h4 class="h6 fw-bold mb-1">Listado de roles</h4>
+                                <small class="text-muted">Revise, edite o elimine perfiles de acceso.</small>
+                            </div>
+                            <h:form>
+                                <h:commandLink action="#{rolesPermisosController.nuevoRol}" styleClass="btn btn-primary btn--sm">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Nuevo Rol</span>
+                                </h:commandLink>
+                            </h:form>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0 system-table">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th class="ps-4">Código</th>
+                                        <th>Rol</th>
+                                        <th>Descripción</th>
+                                        <th>Estado</th>
+                                        <th class="text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <ui:repeat value="#{rolesPermisosController.roles}" var="rol">
+                                        <tr>
+                                            <td class="ps-4">
+                                                <strong><h:outputText value="#{rol.codigo}" /></strong>
+                                            </td>
+                                            <td>
+                                                <strong><h:outputText value="#{rol.nombre}" /></strong>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">
+                                                    <h:outputText value="#{empty rol.descripcion ? 'Sin descripción' : rol.descripcion}" />
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <span class="#{rol.activo ? 'badge approved' : 'badge rejected'}">
+                                                    <h:outputText value="#{rol.activo ? 'Activo' : 'Inactivo'}" />
+                                                </span>
+                                            </td>
+                                            <td class="text-center">
+                                                <h:form>
+                                                    <div class="d-flex gap-1 justify-content-center">
+                                                        <h:commandLink action="#{rolesPermisosController.editarRol(rol.id)}"
+                                                                       styleClass="btn btn-sm btn-outline-primary"
+                                                                       title="Editar">
+                                                            <i class="fas fa-pen-to-square"></i>
+                                                        </h:commandLink>
+
+                                                        <button type="button"
+                                                                class="btn btn-sm btn-outline-danger"
+                                                                title="Eliminar"
+                                                                data-rol="#{rol.nombre}"
+                                                                onclick="confirmarEliminacionRol(this);">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+
+                                                        <h:commandButton value="Eliminar"
+                                                                         action="#{rolesPermisosController.eliminarRol(rol.id)}"
+                                                                         styleClass="d-none js-eliminar-rol-submit" />
+                                                    </div>
+                                                </h:form>
+                                            </td>
+                                        </tr>
+                                    </ui:repeat>
+
+                                    <ui:fragment rendered="#{empty rolesPermisosController.roles}">
+                                        <tr>
+                                            <td colspan="5" class="text-center text-muted py-4">No hay roles registrados.</td>
+                                        </tr>
+                                    </ui:fragment>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 px-2 py-3">
+                            <small class="text-muted">
+                                Página <strong><h:outputText value="#{rolesPermisosController.paginaRoles}" /></strong>
+                                de <strong><h:outputText value="#{rolesPermisosController.totalPaginasRoles}" /></strong>
+                                · Total: <strong><h:outputText value="#{rolesPermisosController.totalRoles}" /></strong> roles
+                            </small>
+
+                            <h:form>
+                                <ul class="pagination pagination-sm mb-0">
+                                    <li class="page-item #{rolesPermisosController.paginaRoles le 1 ? 'disabled' : ''}">
+                                        <h:commandLink action="#{rolesPermisosController.paginaAnteriorRoles}" styleClass="page-link">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </h:commandLink>
+                                    </li>
+
+                                    <ui:repeat value="#{rolesPermisosController.paginasRoles}" var="pagina">
+                                        <li class="page-item #{pagina eq rolesPermisosController.paginaRoles ? 'active' : ''}">
+                                            <h:commandLink action="#{rolesPermisosController.irPaginaRoles(pagina)}" styleClass="page-link">
+                                                <h:outputText value="#{pagina}" />
+                                            </h:commandLink>
+                                        </li>
+                                    </ui:repeat>
+
+                                    <li class="page-item #{rolesPermisosController.paginaRoles ge rolesPermisosController.totalPaginasRoles ? 'disabled' : ''}">
+                                        <h:commandLink action="#{rolesPermisosController.paginaSiguienteRoles}" styleClass="page-link">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </h:commandLink>
+                                    </li>
+                                </ul>
+                            </h:form>
+                        </div>
+                    </section>
+
+                    <section class="settings-section" id="permisos-section">
+                        <div class="card__header">
+                            <i class="fas fa-lock"></i>
+                            <div>
+                                <h3>Permisos por rol</h3>
+                                <small class="text-muted">Seleccione un rol y marque los permisos que tendrá disponibles.</small>
+                            </div>
+                        </div>
+
+                        <h:form id="formPermisosRol">
+                            <div class="details-grid mb-4">
+                                <div class="detail-card">
+                                    <h4>Seleccionar rol</h4>
+                                    <div class="form-floating">
+                                        <h:selectOneMenu id="rolPermisos"
+                                                         styleClass="form-select"
+                                                         value="#{rolesPermisosController.rolPermisosId}">
+                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione rol" noSelectionOption="true" />
+                                            <f:selectItems value="#{rolesPermisosController.rolesTodos}"
+                                                           var="rol"
+                                                           itemValue="#{rol.id}"
+                                                           itemLabel="#{rol.nombre}" />
+                                        </h:selectOneMenu>
+                                        <h:outputLabel for="rolPermisos" value="Rol" />
+                                    </div>
+                                </div>
+
+                                <div class="detail-card">
+                                    <h4>Acciones</h4>
+                                    <div class="d-flex flex-column flex-md-row gap-2">
+                                        <h:commandButton value="Cargar permisos"
+                                                         styleClass="btn btn-outline-primary flex-fill"
+                                                         action="#{rolesPermisosController.cargarPermisosDelRol}" />
+                                        <h:commandButton value="Guardar"
+                                                         styleClass="btn btn-primary flex-fill"
+                                                         action="#{rolesPermisosController.guardarPermisosRol}" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-section-title">
+                                <i class="fas fa-list-check"></i>
+                                <span>Permisos disponibles</span>
+                            </div>
+
+                            <div class="permissions-check-grid">
+                                <h:selectManyCheckbox id="permisosRol"
+                                                      value="#{rolesPermisosController.permisoIdsSeleccionados}"
+                                                      layout="pageDirection"
+                                                      styleClass="permissions-check-list">
+                                    <f:selectItems value="#{rolesPermisosController.permisos}"
+                                                   var="permiso"
+                                                   itemValue="#{permiso.id}"
+                                                   itemLabel="#{permiso.modulo} - #{permiso.nombre}" />
+                                </h:selectManyCheckbox>
+                            </div>
+                        </h:form>
+                    </section>
+
+                    <section class="settings-section" id="usuarios-section">
+                        <div class="card__header">
+                            <i class="fas fa-user-check"></i>
+                            <div>
+                                <h3>Roles por usuario</h3>
+                                <small class="text-muted">Vincule usuarios registrados con uno o más roles del sistema.</small>
+                            </div>
+                        </div>
+
+                        <h:form id="formRolUsuario">
+                            <div class="form-section-title">
+                                <i class="fas fa-user-plus"></i>
+                                <span>Nueva asignación</span>
+                            </div>
+
+                            <div class="row g-3 align-items-end module-filter-row">
+                                <div class="col-lg-5 col-md-6">
+                                    <div class="form-floating">
+                                        <h:selectOneMenu id="usuarioAsignacion"
+                                                         styleClass="form-select"
+                                                         value="#{rolesPermisosController.usuarioAsignacionId}">
+                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione usuario" noSelectionOption="true" />
+                                            <f:selectItems value="#{rolesPermisosController.usuarios}"
+                                                           var="usuario"
+                                                           itemValue="#{usuario.id}"
+                                                           itemLabel="#{usuario.nombreUsuario}" />
+                                        </h:selectOneMenu>
+                                        <h:outputLabel for="usuarioAsignacion" value="Usuario" />
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-5 col-md-6">
+                                    <div class="form-floating">
+                                        <h:selectOneMenu id="rolUsuario"
+                                                         styleClass="form-select"
+                                                         value="#{rolesPermisosController.rolAsignacionUsuarioId}">
+                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione rol" noSelectionOption="true" />
+                                            <f:selectItems value="#{rolesPermisosController.rolesTodos}"
+                                                           var="rol"
+                                                           itemValue="#{rol.id}"
+                                                           itemLabel="#{rol.nombre}" />
+                                        </h:selectOneMenu>
+                                        <h:outputLabel for="rolUsuario" value="Rol" />
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-2 col-md-12">
+                                    <h:commandButton value="Asignar"
+                                                     styleClass="btn btn-primary btn-filter-submit w-100"
+                                                     action="#{rolesPermisosController.asignarRolUsuario}" />
+                                </div>
+                            </div>
+                        </h:form>
+                    </section>
+
+                    <section class="settings-section" id="asignaciones-section">
+                        <div class="card__header">
+                            <i class="fas fa-link"></i>
+                            <div>
+                                <h3>Asignaciones actuales</h3>
+                                <small class="text-muted">Relación vigente de roles con permisos y usuarios con roles.</small>
+                            </div>
+                        </div>
+
+                        <div class="details-grid">
+                            <div class="detail-card">
+                                <h4>Roles y permisos</h4>
+
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0 system-table">
+                                        <thead class="table-primary">
+                                            <tr>
+                                                <th>Rol</th>
+                                                <th>Módulo</th>
+                                                <th>Permiso</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <ui:repeat value="#{rolesPermisosController.asignaciones}" var="asignacion">
+                                                <tr>
+                                                    <td>
+                                                        <strong><h:outputText value="#{asignacion.rol.nombre}" /></strong>
+                                                    </td>
+                                                    <td>
+                                                        <h:outputText value="#{asignacion.permiso.modulo}" />
+                                                    </td>
+                                                    <td>
+                                                        <h:outputText value="#{asignacion.permiso.nombre}" />
+                                                    </td>
+                                                </tr>
+                                            </ui:repeat>
+
+                                            <ui:fragment rendered="#{empty rolesPermisosController.asignaciones}">
+                                                <tr>
+                                                    <td colspan="3" class="text-center text-muted py-4">No hay permisos asignados a roles.</td>
+                                                </tr>
+                                            </ui:fragment>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="detail-card">
+                                <h4>Usuarios y roles</h4>
+
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0 system-table">
+                                        <thead class="table-primary">
+                                            <tr>
+                                                <th>Usuario</th>
+                                                <th>Rol</th>
+                                                <th>Fecha</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <ui:repeat value="#{rolesPermisosController.usuarioRoles}" var="asignacion">
+                                                <tr>
+                                                    <td>
+                                                        <strong><h:outputText value="#{asignacion.usuario.nombreUsuario}" /></strong>
+                                                    </td>
+                                                    <td>
+                                                        <h:outputText value="#{asignacion.rol.nombre}" />
+                                                    </td>
+                                                    <td>
+                                                        <h:outputText value="#{asignacion.fechaAsignacion}" />
+                                                    </td>
+                                                </tr>
+                                            </ui:repeat>
+
+                                            <ui:fragment rendered="#{empty rolesPermisosController.usuarioRoles}">
+                                                <tr>
+                                                    <td colspan="3" class="text-center text-muted py-4">No hay roles asignados a usuarios.</td>
+                                                </tr>
+                                            </ui:fragment>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modalRol" tabindex="-1" aria-labelledby="modalRolLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <h:form id="formRol">
+                            <div class="modal-header bg-primary text-white">
+                                <h5 class="modal-title" id="modalRolLabel">
+                                    <i class="fas fa-user-tag me-2"></i>
+                                    <h:outputText value="#{empty rolesPermisosController.rolSeleccionado.id ? 'Nuevo Rol' : 'Editar Rol'}" />
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                <div class="form-section-title">
+                                    <i class="fas fa-user-tag"></i>
+                                    <span>Datos del rol</span>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-5">
+                                        <div class="form-floating">
+                                            <h:inputText id="codigoRol"
+                                                         styleClass="form-control"
+                                                         value="#{rolesPermisosController.rolSeleccionado.codigo}"
+                                                         readonly="true"
+                                                         p:placeholder="Automático" />
+                                            <h:outputLabel for="codigoRol" value="Código automático" />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-7">
+                                        <div class="form-floating">
+                                            <h:inputText id="nombreRol"
+                                                         styleClass="form-control"
+                                                         value="#{rolesPermisosController.rolSeleccionado.nombre}"
+                                                         required="true"
+                                                         requiredMessage="Ingrese el nombre del rol."
+                                                         validatorMessage="El nombre del rol debe tener entre 3 y 100 caracteres."
+                                                         p:placeholder="Nombre">
+                                                <f:validateLength minimum="3" maximum="100" />
+                                            </h:inputText>
+                                            <h:outputLabel for="nombreRol" value="Nombre del rol" />
+                                        </div>
+                                        <h:message for="nombreRol" styleClass="field-error" />
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <h:inputTextarea id="descripcionRol"
+                                                             styleClass="form-control"
+                                                             value="#{rolesPermisosController.rolSeleccionado.descripcion}"
+                                                             rows="3"
+                                                             p:placeholder="Descripción" />
+                                            <h:outputLabel for="descripcionRol" value="Descripción" />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="access-switch-panel">
+                                            <div class="form-check form-switch m-0">
+                                                <h:selectBooleanCheckbox id="activoRol"
+                                                                         styleClass="form-check-input"
+                                                                         value="#{rolesPermisosController.rolSeleccionado.activo}" />
+                                                <h:outputLabel for="activoRol"
+                                                               styleClass="form-check-label"
+                                                               value="Rol activo" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <h:commandButton value="Guardar Rol"
+                                                 action="#{rolesPermisosController.guardarRol}"
+                                                 styleClass="btn btn-primary" />
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+
+            <h:panelGroup rendered="#{rolesPermisosController.mostrarModalRol}">
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const modalElement = document.getElementById('modalRol');
+
+                        if (modalElement &amp;&amp; window.bootstrap) {
+                            new bootstrap.Modal(modalElement).show();
+                        }
+                    });
+                </script>
+            </h:panelGroup>
+
+            <h:outputScript library="js" name="settings.js" />
+        </div>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <nav class="hfms-nav hfms-nav--admin" aria-label="Menú de administración">
+        <div class="hfms-nav__container">
+            <button class="hfms-nav__toggle"
+                    type="button"
+                    aria-label="Abrir menú de administración"
+                    aria-expanded="false"
+                    aria-controls="adminMenu">
+                <i class="fas fa-bars hfms-nav__toggle-icon" aria-hidden="true"></i>
+            </button>
+            <span class="hfms-nav__mobile-title">Menú administrativo</span>
+
+            <ul class="hfms-nav__menu" id="adminMenu">
+                <li class="hfms-nav__item">
+                    <h:link outcome="/views/admin/dashboard.xhtml"
+                            styleClass="hfms-nav__link #{view.viewId.contains('admin/dashboard') ? 'hfms-nav__link--active' : ''}">
+                        <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                        <span>Inicio</span>
+                    </h:link>
+                </li>
+
+                <li class="hfms-nav__item dropdown">
+                    <button class="hfms-nav__link dropdown-toggle d-none d-md-flex #{view.viewId.contains('admin/empleados') or view.viewId.contains('admin/usuarios') or view.viewId.contains('admin/roles') ? 'hfms-nav__link--active' : ''}"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        <i class="fas fa-users" aria-hidden="true"></i>
+                        <span>Personal</span>
+                    </button>
+                    <span class="hfms-nav__link d-md-none fw-bold text-white-50">
+                        <i class="fas fa-users" aria-hidden="true"></i>
+                        <span>Personal</span>
+                    </span>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <h:link outcome="/views/admin/empleados.xhtml"
+                                    styleClass="dropdown-item #{view.viewId.contains('admin/empleados') ? 'active' : ''}">
+                                <i class="fas fa-id-card me-2" aria-hidden="true"></i>Empleados
+                            </h:link>
+                        </li>
+                        <li>
+                            <h:link outcome="/views/admin/usuarios.xhtml"
+                                    styleClass="dropdown-item #{view.viewId.contains('admin/usuarios') ? 'active' : ''}">
+                                <i class="fas fa-users-cog me-2" aria-hidden="true"></i>Usuarios
+                            </h:link>
+                        </li>
+                        <li>
+                            <h:link outcome="/views/admin/roles.xhtml"
+                                    styleClass="dropdown-item #{view.viewId.contains('admin/roles') ? 'active' : ''}">
+                                <i class="fas fa-user-shield me-2" aria-hidden="true"></i>Roles y Permisos
+                            </h:link>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="hfms-nav__item dropdown">
+                    <button class="hfms-nav__link dropdown-toggle d-none d-md-flex #{view.viewId.contains('admin/turnos') or view.viewId.contains('admin/horarios') or view.viewId.contains('admin/asistencias') or view.viewId.contains('admin/feriados') or view.viewId.contains('admin/correcciones') ? 'hfms-nav__link--active' : ''}"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        <i class="fas fa-calendar-check" aria-hidden="true"></i>
+                        <span>Asistencia</span>
+                    </button>
+                    <span class="hfms-nav__link d-md-none fw-bold text-white-50">
+                        <i class="fas fa-calendar-check" aria-hidden="true"></i>
+                        <span>Asistencia</span>
+                    </span>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <h:link outcome="/views/admin/turnos.xhtml"
+                                    styleClass="dropdown-item #{view.viewId.contains('admin/turnos') ? 'active' : ''}">
+                                <i class="fas fa-clock me-2" aria-hidden="true"></i>Turnos
+                            </h:link>
+                        </li>
+                        <li>
+                            <h:link outcome="/views/admin/horarios.xhtml"
+                                    styleClass="dropdown-item #{view.viewId.contains('admin/horarios') ? 'active' : ''}">
+                                <i class="fas fa-calendar-plus me-2" aria-hidden="true"></i>Horarios
+                            </h:link>
+                        </li>
+                        <li>
+                            <h:link outcome="/views/admin/asistencias.xhtml"
+                                    styleClass="dropdown-item #{view.viewId.contains('admin/asistencias') ? 'active' : ''}">
+                                <i class="fas fa-calendar-check me-2" aria-hidden="true"></i>Asistencias
+                            </h:link>
+                        </li>
+                        <li>
+                            <h:link outcome="/views/admin/feriados.xhtml"
+                                    styleClass="dropdown-item #{view.viewId.contains('admin/feriados') ? 'active' : ''}">
+                                <i class="fas fa-calendar-xmark me-2" aria-hidden="true"></i>Feriados
+                            </h:link>
+                        </li>
+                        <li>
+                            <h:link outcome="/views/admin/correcciones.xhtml"
+                                    styleClass="dropdown-item #{view.viewId.contains('admin/correcciones') ? 'active' : ''}">
+                                <i class="fas fa-check-double me-2" aria-hidden="true"></i>Correcciones
+                            </h:link>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="hfms-nav__item dropdown">
+                    <button class="hfms-nav__link dropdown-toggle d-none d-md-flex #{view.viewId.contains('admin/solicitudes') or view.viewId.contains('admin/documentos') or view.viewId.contains('admin/reportes') or view.viewId.contains('admin/auditoria') ? 'hfms-nav__link--active' : ''}"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        <i class="fas fa-folder-open" aria-hidden="true"></i>
+                        <span>Gestión</span>
+                    </button>
+                    <span class="hfms-nav__link d-md-none fw-bold text-white-50">
+                        <i class="fas fa-folder-open" aria-hidden="true"></i>
+                        <span>Gestión</span>
+                    </span>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <h:link outcome="/views/admin/solicitudes.xhtml"
+                                    styleClass="dropdown-item #{view.viewId.contains('admin/solicitudes') ? 'active' : ''}">
+                                <i class="fas fa-file-alt me-2" aria-hidden="true"></i>Solicitudes
+                            </h:link>
+                        </li>
+                        <li>
+                            <h:link outcome="/views/admin/documentos.xhtml"
+                                    styleClass="dropdown-item #{view.viewId.contains('admin/documentos') ? 'active' : ''}">
+                                <i class="fas fa-file-upload me-2" aria-hidden="true"></i>Documentos
+                            </h:link>
+                        </li>
+                        <li>
+                            <h:link outcome="/views/admin/reportes.xhtml"
+                                    styleClass="dropdown-item #{view.viewId.contains('admin/reportes') ? 'active' : ''}">
+                                <i class="fas fa-chart-bar me-2" aria-hidden="true"></i>Reportes
+                            </h:link>
+                        </li>
+                        <li>
+                            <h:link outcome="/views/admin/auditoria.xhtml"
+                                    styleClass="dropdown-item #{view.viewId.contains('admin/auditoria') ? 'active' : ''}">
+                                <i class="fas fa-history me-2" aria-hidden="true"></i>Auditoría
+                            </h:link>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="hfms-nav__item dropdown">
+                    <button class="hfms-nav__link dropdown-toggle d-none d-md-flex #{view.viewId.contains('admin/variables') or view.viewId.contains('admin/sedes') ? 'hfms-nav__link--active' : ''}"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        <i class="fas fa-gear" aria-hidden="true"></i>
+                        <span>Sistema</span>
+                    </button>
+                    <span class="hfms-nav__link d-md-none fw-bold text-white-50">
+                        <i class="fas fa-gear" aria-hidden="true"></i>
+                        <span>Sistema</span>
+                    </span>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <h:link outcome="/views/admin/variables.xhtml"
+                                    styleClass="dropdown-item #{view.viewId.contains('admin/variables') ? 'active' : ''}">
+                                <i class="fas fa-database me-2" aria-hidden="true"></i>Variables Globales
+                            </h:link>
+                        </li>
+                        <li>
+                            <h:link outcome="/views/admin/sedes.xhtml"
+                                    styleClass="dropdown-item #{view.viewId.contains('admin/sedes') ? 'active' : ''}">
+                                <i class="fas fa-hospital me-2" aria-hidden="true"></i>Sedes
+                            </h:link>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="hfms-nav__item">
+                    <h:link outcome="/views/admin/catalogos.xhtml"
+                            styleClass="hfms-nav__link #{view.viewId.contains('admin/catalogos') ? 'hfms-nav__link--active' : ''}">
+                        <i class="fas fa-layer-group" aria-hidden="true"></i>
+                        <span>Catálogos</span>
+                    </h:link>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</ui:composition>

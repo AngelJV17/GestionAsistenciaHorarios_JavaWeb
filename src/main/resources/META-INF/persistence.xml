@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="3.0"
+             xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+                                 https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+
+    <persistence-unit name="hospitalPU" transaction-type="RESOURCE_LOCAL">
+
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <!-- Entidades JPA -->
+        <class>com.hospital.gestionasistenciashorarioshospital.modelo.Area</class>
+        <class>com.hospital.gestionasistenciashorarioshospital.modelo.Asistencia</class>
+        <class>com.hospital.gestionasistenciashorarioshospital.modelo.Auditoria</class>
+        <class>com.hospital.gestionasistenciashorarioshospital.modelo.Cargo</class>
+        <class>com.hospital.gestionasistenciashorarioshospital.modelo.Documento</class>
+        <class>com.hospital.gestionasistenciashorarioshospital.modelo.Empleado</class>
+        <class>com.hospital.gestionasistenciashorarioshospital.modelo.Especialidad</class>
+        <class>com.hospital.gestionasistenciashorarioshospital.modelo.Feriado</class>
+        <class>com.hospital.gestionasistenciashorarioshospital.modelo.Horario</class>
+        <class>com.hospital.gestionasistenciashorarioshospital.modelo.Justificacion</class>
+        <class>com.hospital.gestionasistenciashorarioshospital.modelo.Marcacion</class>
+        <class>com.hospital.gestionasistenciashorarioshospital.modelo.Permiso</class>
+        <class>com.hospital.gestionasistenciashorarioshospital.modelo.Rol</class>
+        <class>com.hospital.gestionasistenciashorarioshospital.modelo.RolPermiso</class>
+        <class>com.hospital.gestionasistenciashorarioshospital.modelo.Sede</class>
+        <class>com.hospital.gestionasistenciashorarioshospital.modelo.Solicitud</class>
+        <class>com.hospital.gestionasistenciashorarioshospital.modelo.TipoDocumento</class>
+        <class>com.hospital.gestionasistenciashorarioshospital.modelo.TipoSolicitud</class>
+        <class>com.hospital.gestionasistenciashorarioshospital.modelo.Turno</class>
+        <class>com.hospital.gestionasistenciashorarioshospital.modelo.Usuario</class>
+        <class>com.hospital.gestionasistenciashorarioshospital.modelo.UsuarioRol</class>
+        <class>com.hospital.gestionasistenciashorarioshospital.modelo.VariableGlobal</class>
+
+        <properties>
+            <!-- Conexión MySQL -->
+            <property name="jakarta.persistence.jdbc.driver"
+                      value="com.mysql.cj.jdbc.Driver"/>
+
+            <property name="jakarta.persistence.jdbc.url"
+                      value="jdbc:mysql://localhost:3306/hospital_bd?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=America/Lima"/>
+
+            <property name="jakarta.persistence.jdbc.user"
+                      value="root"/>
+
+            <property name="jakarta.persistence.jdbc.password"
+                      value=""/>
+
+            <!-- Hibernate -->
+            <property name="hibernate.dialect"
+                      value="org.hibernate.dialect.MySQLDialect"/>
+
+            <property name="hibernate.hbm2ddl.auto"
+                      value="update"/>
+
+            <property name="hibernate.show_sql"
+                      value="true"/>
+
+            <property name="hibernate.format_sql"
+                      value="true"/>
+
+            <property name="hibernate.highlight_sql"
+                      value="true"/>
+        </properties>
+
+    </persistence-unit>
+
+</persistence>

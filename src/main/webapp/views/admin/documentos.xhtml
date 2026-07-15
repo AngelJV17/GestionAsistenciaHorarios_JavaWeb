@@ -1,0 +1,310 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Documentos del Personal | Hospital Félix Mayorca Soto</ui:define>
+
+    <ui:define name="content">
+        <div class="module-page">
+            <section class="rounded-3 shadow p-4 mb-4 hero-banner">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-8">
+                        <h1 class="h2 fw-bold mb-2 text-white">
+                            <i class="fas fa-file-upload me-2"></i>Documentos del Personal
+                        </h1>
+                        <p class="mb-0 text-white opacity-85">
+                            Cargue contratos, constancias, licencias y archivos asociados a cada empleado.
+                        </p>
+                    </div>
+                    <div class="col-lg-4">
+                        <h:form>
+                            <div class="hero-actions justify-content-lg-end">
+                                <h:commandLink styleClass="hero-action-btn" action="#{adminDocumentosController.cargarDocumentos}">
+                                    <i class="fas fa-sync-alt fs-4"></i>
+                                    <span class="hero-action-btn__text">
+                                        <span class="hero-action-btn__title">Actualizar</span>
+                                        <span class="hero-action-btn__subtitle">Recargar listado</span>
+                                    </span>
+                                </h:commandLink>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas #{adminDocumentosController.modoEdicion ? 'fa-pen-to-square' : 'fa-cloud-upload-alt'}"></i>
+                    <div>
+                        <h3>#{adminDocumentosController.modoEdicion ? 'Editar documento' : 'Cargar documento'}</h3>
+                        <small class="text-muted">
+                            #{adminDocumentosController.modoEdicion ? 'Si adjunta un nuevo archivo, se reemplazará el anterior.' : 'El archivo se asociará solo al empleado seleccionado.'}
+                        </small>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h:form id="cargaDocumentoForm" enctype="multipart/form-data">
+                        <h:messages globalOnly="true" styleClass="jsf-alert-source d-none" />
+                        <div class="document-upload-layout">
+                            <section class="document-upload-group">
+                                <div class="document-upload-group__title">
+                                    <i class="fas fa-user-check"></i>
+                                    <div>
+                                        <h4>Propietario del documento</h4>
+                                        <small class="text-muted">Define quién podrá visualizar este archivo en su panel.</small>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-lg-8">
+                                        <div class="form-floating">
+                                            <h:selectOneMenu id="empleado" styleClass="form-select" value="#{adminDocumentosController.empleadoId}" required="true">
+                                                <f:selectItem itemValue="#{null}" itemLabel="Seleccione empleado" noSelectionOption="true" />
+                                                <f:selectItems value="#{adminDocumentosController.empleados}" var="empleado" itemValue="#{empleado.id}" itemLabel="#{empleado.codigoEmpleado} - #{empleado.nombreCompleto}" />
+                                            </h:selectOneMenu>
+                                            <h:outputLabel for="empleado" value="Empleado propietario" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="document-upload-note">
+                                            <i class="fas fa-lock"></i>
+                                            <span>Solo el empleado seleccionado verá el documento.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="document-upload-group">
+                                <div class="document-upload-group__title">
+                                    <i class="fas fa-tags"></i>
+                                    <div>
+                                        <h4>Clasificación y vigencia</h4>
+                                        <small class="text-muted">Ordena el archivo por tipo documental y fecha de control.</small>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <h:selectOneMenu id="tipoDocumento" styleClass="form-select" value="#{adminDocumentosController.tipoDocumentoId}" required="true">
+                                                <f:selectItem itemValue="#{null}" itemLabel="Seleccione tipo" noSelectionOption="true" />
+                                                <f:selectItems value="#{adminDocumentosController.tiposDocumento}" var="tipo" itemValue="#{tipo.id}" itemLabel="#{tipo.nombre}" />
+                                            </h:selectOneMenu>
+                                            <h:outputLabel for="tipoDocumento" value="Tipo de documento" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <h:inputText id="fechaVencimiento" styleClass="form-control"
+                                                         value="#{adminDocumentosController.fechaVencimiento}"
+                                                         p:type="date"
+                                                         p:placeholder="Fecha vencimiento">
+                                                <f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+                                            </h:inputText>
+                                            <h:outputLabel for="fechaVencimiento" value="Fecha vencimiento" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="document-upload-group">
+                                <div class="document-upload-group__title">
+                                    <i class="fas fa-paperclip"></i>
+                                    <div>
+                                        <h4>Archivo y detalle</h4>
+                                        <small class="text-muted">Adjunte el documento digital y una descripción opcional.</small>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-lg-5">
+                                        <label class="document-file-label" for="cargaDocumentoForm:archivo">
+                                            <i class="fas fa-file-arrow-up"></i>
+                                            <span>Archivo</span>
+                                        </label>
+                                        <h:inputFile id="archivo" styleClass="form-control" value="#{adminDocumentosController.archivo}" />
+                                        <small class="text-muted d-block mt-2">Tamaño máximo permitido: 10 MB.</small>
+                                        <h:panelGroup rendered="#{adminDocumentosController.modoEdicion}" layout="block" styleClass="small text-muted mt-1">
+                                            Archivo actual: #{adminDocumentosController.nombreArchivoActual}
+                                        </h:panelGroup>
+                                    </div>
+                                    <div class="col-lg-7">
+                                        <div class="form-floating h-100">
+                                            <h:inputTextarea id="descripcion" styleClass="form-control document-description"
+                                                             value="#{adminDocumentosController.descripcion}"
+                                                             p:placeholder="Descripción" />
+                                            <h:outputLabel for="descripcion" value="Descripción" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="document-upload-actions">
+                            <h:commandButton value="#{adminDocumentosController.modoEdicion ? 'Guardar cambios' : 'Cargar documento'}"
+                                             styleClass="btn btn-primary"
+                                             action="#{adminDocumentosController.guardarDocumento}" />
+                            <h:commandLink value="Cancelar edición"
+                                           styleClass="btn btn-outline-secondary ms-2"
+                                           action="#{adminDocumentosController.cancelarEdicion}"
+                                           rendered="#{adminDocumentosController.modoEdicion}" />
+                        </div>
+                    </h:form>
+                </div>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-filter"></i>
+                    <div>
+                        <h3>Filtros de búsqueda</h3>
+                        <small class="text-muted">Ubique documentos por empleado, tipo o nombre de archivo.</small>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h:form id="filtrosDocumentosAdminForm">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-3">
+                                <div class="form-floating">
+                                    <h:selectOneMenu id="filtroEmpleado" styleClass="form-select" value="#{adminDocumentosController.filtroEmpleadoId}">
+                                        <f:selectItem itemValue="#{null}" itemLabel="Todos los empleados" noSelectionOption="true" />
+                                        <f:selectItems value="#{adminDocumentosController.empleados}" var="empleado" itemValue="#{empleado.id}" itemLabel="#{empleado.codigoEmpleado} - #{empleado.nombreCompleto}" />
+                                    </h:selectOneMenu>
+                                    <h:outputLabel for="filtroEmpleado" value="Empleado" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-floating">
+                                    <h:selectOneMenu id="filtroTipo" styleClass="form-select" value="#{adminDocumentosController.filtroTipoDocumentoId}">
+                                        <f:selectItem itemValue="#{null}" itemLabel="Todos los tipos" noSelectionOption="true" />
+                                        <f:selectItems value="#{adminDocumentosController.tiposDocumento}" var="tipo" itemValue="#{tipo.id}" itemLabel="#{tipo.nombre}" />
+                                    </h:selectOneMenu>
+                                    <h:outputLabel for="filtroTipo" value="Tipo" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <h:inputText id="busqueda" styleClass="form-control"
+                                                 value="#{adminDocumentosController.busqueda}"
+                                                 p:placeholder="Buscar..." />
+                                    <h:outputLabel for="busqueda" value="Buscar" />
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <h:commandLink styleClass="btn btn-primary w-100" action="#{adminDocumentosController.filtrar}" title="Buscar">
+                                    <i class="fas fa-search"></i>
+                                </h:commandLink>
+                            </div>
+                            <div class="col-md-1">
+                                <h:commandLink styleClass="btn btn-outline-primary w-100" action="#{adminDocumentosController.limpiarFiltros}" title="Limpiar filtros">
+                                    <i class="fas fa-eraser"></i>
+                                </h:commandLink>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-folder-tree"></i>
+                    <div>
+                        <h3>Documentos registrados</h3>
+                        <small class="text-muted">Cada archivo queda visible solo para su empleado propietario.</small>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <h:form id="tablaDocumentosAdminForm">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0 system-table document-admin-table">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th class="ps-4">Empleado</th>
+                                        <th>Archivo</th>
+                                        <th>Clasificación</th>
+                                        <th>Fechas</th>
+                                        <th>Ubicación</th>
+                                        <th class="text-center pe-4">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <ui:repeat value="#{adminDocumentosController.documentos}" var="documento">
+                                        <tr>
+                                            <td class="ps-4">
+                                                <div class="document-owner">
+                                                    <strong>#{documento.empleado.nombreCompleto}</strong>
+                                                    <small>#{documento.empleado.codigoEmpleado}</small>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="document-file-cell">
+                                                    <span class="document-file-icon">
+                                                        <i class="fas fa-file-lines"></i>
+                                                    </span>
+                                                    <div>
+                                                        <strong>#{documento.nombreArchivo}</strong>
+                                                        <small>#{empty documento.descripcion ? 'Sin descripción' : documento.descripcion}</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-primary document-type-badge">#{documento.tipoDocumento.nombre}</span>
+                                            </td>
+                                            <td>
+                                                <div class="document-date-stack">
+                                                    <span><strong>Subida:</strong> <h:outputText value="#{documento.fechaSubida}" /></span>
+                                                    <span><strong>Vence:</strong> <h:outputText value="#{empty documento.fechaVencimiento ? 'No aplica' : documento.fechaVencimiento}" /></span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="document-path" title="#{documento.rutaArchivo}">
+                                                    #{documento.rutaArchivo}
+                                                </span>
+                                            </td>
+                                            <td class="text-center pe-4">
+                                                <div class="table-actions" aria-label="Acciones del documento">
+                                                    <h:commandLink styleClass="table-action-btn table-action-btn--primary"
+                                                                   title="Editar documento"
+                                                                   action="#{adminDocumentosController.editarDocumento(documento.id)}">
+                                                        <i class="fas fa-pen-to-square"></i>
+                                                    </h:commandLink>
+                                                    <h:commandLink styleClass="table-action-btn table-action-btn--danger"
+                                                                   title="Eliminar documento"
+                                                                   action="#{adminDocumentosController.eliminarDocumento(documento.id)}"
+                                                                   p:data-document-name="#{documento.nombreArchivo}"
+                                                                   onclick="return confirmarEliminacionDocumento(this);">
+                                                        <i class="fas fa-trash"></i>
+                                                    </h:commandLink>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </ui:repeat>
+                                    <h:panelGroup rendered="#{empty adminDocumentosController.documentos}">
+                                        <tr>
+                                            <td colspan="6" class="text-center text-muted py-4">No hay documentos registrados.</td>
+                                        </tr>
+                                    </h:panelGroup>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 px-4 py-3 border-top">
+                            <small class="text-muted">Página #{adminDocumentosController.pagina} de #{adminDocumentosController.totalPaginas}</small>
+                            <nav aria-label="Paginación de documentos">
+                                <ul class="pagination pagination-sm mb-0">
+                                    <ui:repeat value="#{adminDocumentosController.paginas}" var="pagina">
+                                        <li class="page-item #{pagina eq adminDocumentosController.pagina ? 'active' : ''}">
+                                            <h:commandLink styleClass="page-link" value="#{pagina}" action="#{adminDocumentosController.irPagina(pagina)}" />
+                                        </li>
+                                    </ui:repeat>
+                                </ul>
+                            </nav>
+                        </div>
+                    </h:form>
+                </div>
+            </section>
+        </div>
+    </ui:define>
+</ui:composition>

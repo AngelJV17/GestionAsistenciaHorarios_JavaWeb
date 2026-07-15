@@ -1,0 +1,203 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Panel de Administración | Hospital Félix Mayorca Soto</ui:define>
+
+    <ui:define name="content">
+        <div class="module-page">
+            <section class="rounded-3 shadow p-4 mb-4 hero-banner">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-7">
+                        <h1 class="h2 fw-bold mb-2 text-white">
+                            <i class="fas fa-tachometer-alt me-2"></i>Panel de Administración
+                        </h1>
+                        <p class="mb-0 text-white opacity-85">Supervisión centralizada del personal, asistencias, solicitudes y configuración institucional.</p>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="hero-actions justify-content-lg-end">
+                            <h:link outcome="/views/admin/reportes.xhtml" styleClass="hero-action-btn">
+                                <i class="fas fa-chart-bar fs-4"></i>
+                                <span class="hero-action-btn__text">
+                                    <span class="hero-action-btn__title">Reportes</span>
+                                    <span class="hero-action-btn__subtitle">Ver indicadores</span>
+                                </span>
+                            </h:link>
+                            <h:link outcome="/views/admin/auditoria.xhtml" styleClass="hero-action-btn">
+                                <i class="fas fa-history fs-4"></i>
+                                <span class="hero-action-btn__text">
+                                    <span class="hero-action-btn__title">Auditoría</span>
+                                    <span class="hero-action-btn__subtitle">Revisar actividad</span>
+                                </span>
+                            </h:link>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats-grid mb-4" aria-label="Indicadores principales">
+                <article class="stat-card stat-card-primary bg-white shadow-sm">
+                    <span class="stat-label">Total empleados</span>
+                    <span class="stat-value"><h:outputText value="#{dashboardController.totalEmpleados}" /></span>
+                    <span class="stat-trend trend-primary"><h:outputText value="#{dashboardController.empleadosActivos}" /> activos</span>
+                </article>
+                <article class="stat-card stat-card-success bg-white shadow-sm">
+                    <span class="stat-label">Asistencias hoy</span>
+                    <span class="stat-value"><h:outputText value="#{dashboardController.asistenciasHoy}" /></span>
+                    <span class="stat-trend trend-success"><h:outputText value="#{dashboardController.porcentajeAsistenciaHoy}" />% registrado</span>
+                </article>
+                <article class="stat-card stat-card-warning bg-white shadow-sm">
+                    <span class="stat-label">Correcciones</span>
+                    <span class="stat-value"><h:outputText value="#{dashboardController.correccionesPendientes}" /></span>
+                    <span class="stat-trend trend-warning">Pendientes de revisión</span>
+                </article>
+                <article class="stat-card stat-card-danger bg-white shadow-sm">
+                    <span class="stat-label">Solicitudes</span>
+                    <span class="stat-value"><h:outputText value="#{dashboardController.solicitudesHoy}" /></span>
+                    <span class="stat-trend trend-danger">Nuevas hoy</span>
+                </article>
+            </section>
+
+            <div class="row g-4">
+                <div class="col-xl-8">
+                    <section class="card card-lift border-0 shadow bg-white h-100">
+                        <div class="card__header px-4 pt-4">
+                            <i class="fas fa-star"></i>
+                            <div>
+                                <h3>Accesos rápidos</h3>
+                                <small class="text-muted">Operaciones frecuentes de administración.</small>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-sm-6 col-lg-4">
+                                    <div class="stat-card bg-white shadow-sm h-100 text-start">
+                                        <i class="fas fa-users fa-2x text-primary mb-3"></i>
+                                        <h6 class="fw-bold mb-1">Usuarios</h6>
+                                        <p class="small text-muted mb-3">Gestionar cuentas y accesos.</p>
+                                        <h:link outcome="/views/admin/usuarios.xhtml" styleClass="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-arrow-right me-1"></i>Acceder
+                                        </h:link>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-lg-4">
+                                    <div class="stat-card bg-white shadow-sm h-100 text-start">
+                                        <i class="fas fa-clock fa-2x text-info mb-3"></i>
+                                        <h6 class="fw-bold mb-1">Turnos</h6>
+                                        <p class="small text-muted mb-3">Asignar y revisar horarios.</p>
+                                        <h:link outcome="/views/admin/turnos.xhtml" styleClass="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-arrow-right me-1"></i>Acceder
+                                        </h:link>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-lg-4">
+                                    <div class="stat-card bg-white shadow-sm h-100 text-start">
+                                        <i class="fas fa-check-double fa-2x text-warning mb-3"></i>
+                                        <h6 class="fw-bold mb-1">Correcciones</h6>
+                                        <p class="small text-muted mb-3">Validar cambios de asistencia.</p>
+                                        <h:link outcome="/views/admin/correcciones.xhtml" styleClass="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-arrow-right me-1"></i>Acceder
+                                        </h:link>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-lg-4">
+                                    <div class="stat-card bg-white shadow-sm h-100 text-start">
+                                        <i class="fas fa-file-alt fa-2x text-danger mb-3"></i>
+                                        <h6 class="fw-bold mb-1">Solicitudes</h6>
+                                        <p class="small text-muted mb-3">Gestionar trámites del personal.</p>
+                                        <h:link outcome="/views/admin/solicitudes.xhtml" styleClass="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-arrow-right me-1"></i>Acceder
+                                        </h:link>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-lg-4">
+                                    <div class="stat-card bg-white shadow-sm h-100 text-start">
+                                        <i class="fas fa-user-tag fa-2x text-success mb-3"></i>
+                                        <h6 class="fw-bold mb-1">Roles</h6>
+                                        <p class="small text-muted mb-3">Permisos y perfiles del sistema.</p>
+                                        <h:link outcome="/views/admin/roles.xhtml" styleClass="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-arrow-right me-1"></i>Acceder
+                                        </h:link>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-lg-4">
+                                    <div class="stat-card bg-white shadow-sm h-100 text-start">
+                                        <i class="fas fa-layer-group fa-2x text-secondary mb-3"></i>
+                                        <h6 class="fw-bold mb-1">Catálogos</h6>
+                                        <p class="small text-muted mb-3">Mantener datos maestros.</p>
+                                        <h:link outcome="/views/admin/catalogos.xhtml" styleClass="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-arrow-right me-1"></i>Acceder
+                                        </h:link>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="col-xl-4">
+                    <section class="card card-lift border-0 shadow bg-white h-100">
+                        <div class="card__header px-4 pt-4">
+                            <i class="fas fa-heartbeat"></i>
+                            <div>
+                                <h3>Estado operativo</h3>
+                                <small class="text-muted">Resumen del día administrativo.</small>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="detail-item">
+                                <span>Personal activo</span>
+                                <span><h:outputText value="#{dashboardController.empleadosActivos}" /> / <h:outputText value="#{dashboardController.totalEmpleados}" /></span>
+                            </div>
+                            <div class="detail-item">
+                                <span>Asistencia registrada</span>
+                                <span><h:outputText value="#{dashboardController.porcentajeAsistenciaHoy}" />%</span>
+                            </div>
+                            <div class="detail-item">
+                                <span>Correcciones abiertas</span>
+                                <span><h:outputText value="#{dashboardController.correccionesPendientes}" /></span>
+                            </div>
+                            <div class="detail-item">
+                                <span>Solicitudes por atender</span>
+                                <span><h:outputText value="#{dashboardController.solicitudesPendientes}" /></span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <section class="card card-lift border-0 shadow bg-white mt-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-history"></i>
+                    <div>
+                        <h3>Actividad reciente del sistema</h3>
+                        <small class="text-muted">Últimos eventos registrados por administración.</small>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        <ui:repeat value="#{dashboardController.actividadReciente}" var="evento">
+                            <li class="list-group-item d-flex justify-content-between align-items-start gap-3 px-4 py-3">
+                                <div>
+                                    <div class="fw-semibold">
+                                        <i class="fas fa-circle-info text-primary me-2"></i>
+                                        <h:outputText value="#{evento.accion}" /> en <h:outputText value="#{evento.tablaAfectada}" />
+                                    </div>
+                                    <small class="text-muted"><h:outputText value="#{evento.descripcion}" /></small>
+                                </div>
+                                <small class="text-muted text-nowrap">
+                                    <h:outputText value="#{evento.fechaRegistro}" />
+                                </small>
+                            </li>
+                        </ui:repeat>
+                        <ui:fragment rendered="#{empty dashboardController.actividadReciente}">
+                            <li class="list-group-item text-center text-muted px-4 py-4">Aún no hay actividad registrada.</li>
+                        </ui:fragment>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </ui:define>
+</ui:composition>

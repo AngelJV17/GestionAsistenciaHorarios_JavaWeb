@@ -1,0 +1,194 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Gestión de Solicitudes | Hospital Félix Mayorca Soto</ui:define>
+
+    <ui:define name="content">
+        <div class="module-page">
+            <section class="rounded-3 shadow p-4 mb-4 hero-banner">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-8">
+                        <h1 class="h2 fw-bold mb-2 text-white">
+                            <i class="fas fa-file-alt me-2"></i>Gestión de Solicitudes
+                        </h1>
+                        <p class="mb-0 text-white opacity-85">Administre solicitudes del personal, licencias, permisos y cambios de turno.</p>
+                    </div>
+                    <div class="col-lg-4">
+                        <h:form>
+                            <div class="hero-actions justify-content-lg-end">
+                                <h:commandLink styleClass="hero-action-btn" action="#{solicitudesController.cargarSolicitudes}">
+                                    <i class="fas fa-sync-alt fs-4"></i>
+                                    <span class="hero-action-btn__text">
+                                        <span class="hero-action-btn__title">Actualizar</span>
+                                        <span class="hero-action-btn__subtitle">Recargar bandeja</span>
+                                    </span>
+                                </h:commandLink>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats-grid mb-4" aria-label="Resumen de solicitudes">
+                <article class="stat-card stat-card-warning bg-white shadow-sm">
+                    <span class="stat-label">Pendientes</span>
+                    <span class="stat-value">#{solicitudesController.totalPendientes}</span>
+                    <span class="stat-trend trend-warning">Requieren revisión</span>
+                </article>
+                <article class="stat-card stat-card-success bg-white shadow-sm">
+                    <span class="stat-label">Aprobadas</span>
+                    <span class="stat-value">#{solicitudesController.totalAprobadas}</span>
+                    <span class="stat-trend trend-success">Histórico</span>
+                </article>
+                <article class="stat-card stat-card-danger bg-white shadow-sm">
+                    <span class="stat-label">Rechazadas</span>
+                    <span class="stat-value">#{solicitudesController.totalRechazadas}</span>
+                    <span class="stat-trend trend-danger">Histórico</span>
+                </article>
+                <article class="stat-card stat-card-primary bg-white shadow-sm">
+                    <span class="stat-label">Total solicitudes</span>
+                    <span class="stat-value">#{solicitudesController.totalHistorico}</span>
+                    <span class="stat-trend trend-primary">Histórico</span>
+                </article>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-filter"></i>
+                    <div>
+                        <h3>Filtros de búsqueda</h3>
+                        <small class="text-muted">Filtre solicitudes por estado, empleado o coincidencia directa.</small>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h:form id="filtrosSolicitudesForm">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-3">
+                                <div class="form-floating">
+                                    <h:selectOneMenu id="filtroEstado" styleClass="form-select" value="#{solicitudesController.filtroEstadoId}">
+                                        <f:selectItem itemValue="#{null}" itemLabel="Todos los estados" noSelectionOption="true" />
+                                        <f:selectItems value="#{solicitudesController.estados}" var="estado" itemValue="#{estado.id}" itemLabel="#{estado.nombre}" />
+                                    </h:selectOneMenu>
+                                    <h:outputLabel for="filtroEstado" value="Estado" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-floating">
+                                    <h:selectOneMenu id="filtroEmpleado" styleClass="form-select" value="#{solicitudesController.filtroEmpleadoId}">
+                                        <f:selectItem itemValue="#{null}" itemLabel="Todos los empleados" noSelectionOption="true" />
+                                        <f:selectItems value="#{solicitudesController.empleados}" var="empleado" itemValue="#{empleado.id}" itemLabel="#{empleado.nombreCompleto}" />
+                                    </h:selectOneMenu>
+                                    <h:outputLabel for="filtroEmpleado" value="Empleado" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <h:inputText id="busqueda" styleClass="form-control" value="#{solicitudesController.busqueda}" p:placeholder="Buscar..." />
+                                    <h:outputLabel for="busqueda" value="Buscar" />
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <h:commandButton value="Filtrar" styleClass="btn btn-primary w-100" action="#{solicitudesController.filtrar}" />
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-inbox"></i>
+                    <div>
+                        <h3>Bandeja de solicitudes</h3>
+                        <small class="text-muted">Solicitudes recibidas para revisión y seguimiento administrativo.</small>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <h:form id="tablaSolicitudesForm">
+                        <h:messages globalOnly="true" styleClass="jsf-alert-source d-none" />
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0 system-table">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th class="ps-4">Empleado</th>
+                                        <th>Tipo</th>
+                                        <th>Fecha</th>
+                                        <th>Motivo</th>
+                                        <th>Adjunto</th>
+                                        <th>Estado</th>
+                                        <th class="text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <ui:repeat value="#{solicitudesController.solicitudes}" var="solicitud">
+                                        <tr>
+                                            <td class="ps-4">
+                                                <strong>#{solicitud.empleado.nombreCompleto}</strong><br />
+                                                <small class="text-muted">#{solicitud.empleado.codigoEmpleado}</small>
+                                            </td>
+                                            <td><strong>#{solicitud.tipoSolicitud.nombre}</strong></td>
+                                            <td>
+                                                <h:outputText value="#{solicitud.fechaInicio}" />
+                                                <span> - </span>
+                                                <h:outputText value="#{solicitud.fechaFin}" rendered="#{not empty solicitud.fechaFin}" />
+                                            </td>
+                                            <td class="small">#{solicitudesController.obtenerMotivoVisible(solicitud)}</td>
+                                            <td>
+                                                <h:commandLink styleClass="attachment-open-btn"
+                                                               title="Abrir adjunto"
+                                                               onclick="return abrirEnNuevaPestana(this);"
+                                                               action="#{solicitudesController.abrirAdjunto(solicitud)}"
+                                                               rendered="#{not empty solicitud.nombreArchivo}">
+                                                    <i class="fas fa-paperclip"></i>
+                                                    <span>Abrir</span>
+                                                    <i class="fas fa-arrow-up-right-from-square"></i>
+                                                </h:commandLink>
+                                                <h:panelGroup styleClass="text-muted small" rendered="#{empty solicitud.nombreArchivo}">Sin adjunto</h:panelGroup>
+                                            </td>
+                                            <td><span class="badge bg-primary">#{solicitud.estado.nombre}</span></td>
+                                            <td class="text-center">
+                                                <h:panelGroup rendered="#{solicitudesController.estaPendiente(solicitud)}" layout="block" styleClass="d-flex gap-1 justify-content-center">
+                                                    <h:commandLink styleClass="btn btn-sm btn-outline-success" title="Aprobar" action="#{solicitudesController.aprobar}">
+                                                        <f:setPropertyActionListener target="#{solicitudesController.solicitudSeleccionada}" value="#{solicitud}" />
+                                                        <i class="fas fa-check"></i>
+                                                    </h:commandLink>
+                                                    <h:commandLink styleClass="btn btn-sm btn-outline-danger" title="Rechazar" action="#{solicitudesController.rechazar}">
+                                                        <f:setPropertyActionListener target="#{solicitudesController.solicitudSeleccionada}" value="#{solicitud}" />
+                                                        <i class="fas fa-xmark"></i>
+                                                    </h:commandLink>
+                                                </h:panelGroup>
+                                                <h:panelGroup rendered="#{not solicitudesController.estaPendiente(solicitud)}" styleClass="text-muted small">
+                                                    Atendida
+                                                </h:panelGroup>
+                                            </td>
+                                        </tr>
+                                    </ui:repeat>
+                                    <h:panelGroup rendered="#{empty solicitudesController.solicitudes}">
+                                        <tr><td colspan="7" class="text-center text-muted py-4">No hay solicitudes registradas.</td></tr>
+                                    </h:panelGroup>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 px-4 py-3 border-top">
+                            <small class="text-muted">Total: #{solicitudesController.totalSolicitudes} registros</small>
+                            <nav aria-label="Paginación de solicitudes">
+                                <ul class="pagination pagination-sm mb-0">
+                                    <ui:repeat value="#{solicitudesController.paginas}" var="pagina">
+                                        <li class="#{pagina eq solicitudesController.pagina ? 'page-item active' : 'page-item'}">
+                                            <h:commandLink styleClass="page-link" value="#{pagina}" action="#{solicitudesController.irPagina(pagina)}" />
+                                        </li>
+                                    </ui:repeat>
+                                </ul>
+                            </nav>
+                        </div>
+                    </h:form>
+                </div>
+            </section>
+        </div>
+    </ui:define>
+</ui:composition>

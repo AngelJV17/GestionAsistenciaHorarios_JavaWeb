@@ -1,0 +1,258 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Configuración | Hospital Félix Mayorca Soto</ui:define>
+
+    <ui:define name="content">
+        <div class="module-page">
+            <section class="rounded-3 shadow p-4 mb-4 hero-banner">
+                <div class="row align-items-center g-3">
+                    <div class="col-lg-12">
+                        <h1 class="h2 fw-bold mb-2 text-white">
+                            <i class="fas fa-gear me-2"></i>Configuración de Cuenta
+                        </h1>
+                        <p class="mb-0 text-white opacity-85">
+                            Actualice su perfil profesional, datos de contacto y seguridad de acceso.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <h:panelGroup rendered="#{empty medicoConfiguracionController.empleado}">
+                <section class="card card-lift border-0 shadow bg-white">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-user-slash fa-3x text-muted mb-3"></i>
+                        <h2 class="h4">No hay perfil médico vinculado</h2>
+                        <p class="text-muted mb-0">Solicite al administrador que vincule su usuario con un empleado activo.</p>
+                    </div>
+                </section>
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{not empty medicoConfiguracionController.empleado}">
+                <div class="settings-container">
+                    <aside class="settings-sidebar card-lift" aria-label="Opciones de configuración">
+                        <div class="card__header">
+                            <i class="fas fa-sliders"></i>
+                            <div>
+                                <h3>Opciones</h3>
+                                <small class="text-muted">Seleccione una seccion.</small>
+                            </div>
+                        </div>
+                        <ul class="settings-menu" role="tablist">
+                            <li>
+                                <button class="settings-item active" data-section="profile" type="button">
+                                    <i class="fas fa-user"></i>
+                                    <span>Perfil</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button class="settings-item" data-section="account" type="button">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>Cuenta</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button class="settings-item" data-section="security" type="button">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span>Seguridad</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </aside>
+
+                    <div class="settings-content card-lift">
+                        <div class="settings-section active" id="profile-section">
+                            <div class="card__header">
+                                <i class="fas fa-user-doctor"></i>
+                                <div>
+                                    <h3>Perfil Profesional</h3>
+                                    <small class="text-muted">Datos personales y laborales vinculados a su empleado.</small>
+                                </div>
+                            </div>
+
+                            <div class="profile-header">
+                                <div class="profile-avatar">#{medicoConfiguracionController.iniciales}</div>
+                                <div class="profile-info">
+                                    <h2 class="text-dark">#{medicoConfiguracionController.empleado.nombreCompleto}</h2>
+                                    <p class="text-secondary">#{medicoConfiguracionController.resumenProfesional}</p>
+                                    <span class="badge bg-primary">#{medicoConfiguracionController.empleado.codigoEmpleado}</span>
+                                </div>
+                            </div>
+
+                            <h:form id="profileForm">
+                                <h:messages globalOnly="true" styleClass="jsf-alert-source d-none" />
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <h:inputText id="firstName" styleClass="form-control"
+                                                         value="#{medicoConfiguracionController.empleado.nombres}"
+                                                         required="true"
+                                                         p:placeholder="Nombre" />
+                                            <h:outputLabel for="firstName" value="Nombres" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <h:inputText id="lastName" styleClass="form-control"
+                                                         value="#{medicoConfiguracionController.empleado.apellidoPaterno}"
+                                                         required="true"
+                                                         p:placeholder="Apellido paterno" />
+                                            <h:outputLabel for="lastName" value="Apellido paterno" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <h:inputText id="motherLastName" styleClass="form-control"
+                                                         value="#{medicoConfiguracionController.empleado.apellidoMaterno}"
+                                                         p:placeholder="Apellido materno" />
+                                            <h:outputLabel for="motherLastName" value="Apellido materno" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <h:inputText id="email" styleClass="form-control"
+                                                         value="#{medicoConfiguracionController.empleado.correo}"
+                                                         p:type="email"
+                                                         p:placeholder="Correo" />
+                                            <h:outputLabel for="email" value="Correo institucional" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <h:inputText id="phone" styleClass="form-control"
+                                                         value="#{medicoConfiguracionController.empleado.telefono}"
+                                                         p:type="tel"
+                                                         p:placeholder="Teléfono" />
+                                            <h:outputLabel for="phone" value="Teléfono" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <h:inputText id="colegiatura" styleClass="form-control"
+                                                         value="#{medicoConfiguracionController.empleado.numeroColegiatura}"
+                                                         p:placeholder="Número de colegiatura" />
+                                            <h:outputLabel for="colegiatura" value="Número de colegiatura" />
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <h:inputText id="address" styleClass="form-control"
+                                                         value="#{medicoConfiguracionController.empleado.direccion}"
+                                                         p:placeholder="Dirección" />
+                                            <h:outputLabel for="address" value="Dirección" />
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <h:inputTextarea id="bio" styleClass="form-control"
+                                                             value="#{medicoConfiguracionController.empleado.biografia}"
+                                                             p:placeholder="Biografia" />
+                                            <h:outputLabel for="bio" value="Biografia" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="settings-actions">
+                                    <h:commandButton value="Guardar perfil"
+                                                     styleClass="btn btn-primary"
+                                                     action="#{medicoConfiguracionController.guardarPerfil}" />
+                                </div>
+                            </h:form>
+                        </div>
+
+                        <div class="settings-section" id="account-section">
+                            <div class="card__header">
+                                <i class="fas fa-envelope"></i>
+                                <div>
+                                    <h3>Datos de Cuenta</h3>
+                                    <small class="text-muted">Información usada para recuperación y acceso.</small>
+                                </div>
+                            </div>
+
+                            <h:form id="accountForm">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <h:inputText id="username" styleClass="form-control"
+                                                         value="#{medicoConfiguracionController.usuario.nombreUsuario}"
+                                                         readonly="true"
+                                                         p:placeholder="Usuario" />
+                                            <h:outputLabel for="username" value="Usuario" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <h:inputText id="recoveryEmail" styleClass="form-control"
+                                                         value="#{medicoConfiguracionController.usuario.correoRecuperacion}"
+                                                         p:type="email"
+                                                         p:placeholder="Correo de recuperación" />
+                                            <h:outputLabel for="recoveryEmail" value="Correo de recuperación" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="settings-actions">
+                                    <h:commandButton value="Guardar cuenta"
+                                                     styleClass="btn btn-primary"
+                                                     action="#{medicoConfiguracionController.guardarCuenta}" />
+                                </div>
+                            </h:form>
+                        </div>
+
+                        <div class="settings-section" id="security-section">
+                            <div class="card__header">
+                                <i class="fas fa-shield-alt"></i>
+                                <div>
+                                    <h3>Seguridad</h3>
+                                    <small class="text-muted">Cambie su contraseña de acceso al sistema.</small>
+                                </div>
+                            </div>
+
+                            <h:form id="securityForm">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <div class="form-floating">
+                                            <h:inputSecret id="currentPassword" styleClass="form-control"
+                                                           value="#{medicoConfiguracionController.passwordActual}"
+                                                           p:placeholder="Contraseña actual" />
+                                            <h:outputLabel for="currentPassword" value="Contraseña actual" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-floating">
+                                            <h:inputSecret id="newPassword" styleClass="form-control"
+                                                           value="#{medicoConfiguracionController.passwordNueva}"
+                                                           p:placeholder="Nueva contraseña" />
+                                            <h:outputLabel for="newPassword" value="Nueva contraseña" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-floating">
+                                            <h:inputSecret id="confirmPassword" styleClass="form-control"
+                                                           value="#{medicoConfiguracionController.passwordConfirmacion}"
+                                                           p:placeholder="Confirmar contraseña" />
+                                            <h:outputLabel for="confirmPassword" value="Confirmar contraseña" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="settings-actions">
+                                    <h:commandButton value="Cambiar contraseña"
+                                                     styleClass="btn btn-primary"
+                                                     action="#{medicoConfiguracionController.cambiarPassword}" />
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </h:panelGroup>
+        </div>
+
+        <h:outputScript library="js" name="settings.js" />
+    </ui:define>
+</ui:composition>
+

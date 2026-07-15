@@ -1,0 +1,168 @@
+﻿<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Documentos | Hospital Félix Mayorca Soto</ui:define>
+
+    <ui:define name="content">
+        <div class="module-page">
+            <section class="rounded-3 shadow p-4 mb-4 hero-banner">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-8">
+                        <h1 class="h2 fw-bold mb-2 text-white">
+                            <i class="fas fa-file-alt me-2"></i>Documentos y Archivos
+                        </h1>
+                        <p class="mb-0 text-white opacity-85">
+                            Consulte los archivos cargados por administracion en su legajo laboral.
+                        </p>
+                    </div>
+                    <div class="col-lg-4">
+                        <h:form>
+                            <div class="hero-actions justify-content-lg-end">
+                                <h:commandLink styleClass="hero-action-btn" action="#{medicoDocumentosController.cargarDocumentos}">
+                                    <i class="fas fa-sync-alt fs-4"></i>
+                                    <span class="hero-action-btn__text">
+                                        <span class="hero-action-btn__title">Actualizar</span>
+                                        <span class="hero-action-btn__subtitle">Recargar documentos</span>
+                                    </span>
+                                </h:commandLink>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </section>
+
+            <div class="settings-container documents-container">
+                <aside class="settings-sidebar documents-sidebar card-lift" aria-label="Tipos de documento">
+                    <div class="section-header mb-3">
+                        <span class="icon"><i class="fas fa-folder-open"></i></span>
+                        <div>
+                            <h3>Tipos</h3>
+                            <small class="text-muted">Filtre por tipo documental.</small>
+                        </div>
+                    </div>
+
+                    <h:form id="tiposDocumentosForm">
+                        <ul class="settings-menu category-list">
+                            <li>
+                                <h:commandLink styleClass="settings-item category-item #{empty medicoDocumentosController.filtroTipoDocumentoId ? 'active' : ''}"
+                                               action="#{medicoDocumentosController.filtrar}">
+                                    <f:setPropertyActionListener target="#{medicoDocumentosController.filtroTipoDocumentoId}" value="#{null}" />
+                                    <i class="fas fa-folder-open"></i>
+                                    <span>Todos los documentos</span>
+                                </h:commandLink>
+                            </li>
+                            <ui:repeat value="#{medicoDocumentosController.tiposDocumento}" var="tipo">
+                                <li>
+                                    <h:commandLink styleClass="settings-item category-item #{medicoDocumentosController.filtroTipoDocumentoId eq tipo.id ? 'active' : ''}"
+                                                   action="#{medicoDocumentosController.filtrar}">
+                                        <f:setPropertyActionListener target="#{medicoDocumentosController.filtroTipoDocumentoId}" value="#{tipo.id}" />
+                                        <i class="fas fa-file-alt"></i>
+                                        <span>#{tipo.nombre}</span>
+                                    </h:commandLink>
+                                </li>
+                            </ui:repeat>
+                        </ul>
+                    </h:form>
+                </aside>
+
+                <section class="settings-content documents-main card-lift" aria-labelledby="myDocumentsTitle">
+                    <div class="card__header documents-titlebar">
+                        <i class="fas fa-file-alt"></i>
+                        <div>
+                            <h3 id="myDocumentsTitle">Mis Documentos</h3>
+                            <small class="text-muted">Archivos registrados en la tabla documentos.</small>
+                        </div>
+                    </div>
+
+                    <h:form id="filtrosDocumentosForm">
+                        <div class="documents-filter-inline">
+                            <div class="form-floating documents-filter-inline__search">
+                                <h:inputText id="searchDocuments"
+                                             styleClass="form-control"
+                                             value="#{medicoDocumentosController.busqueda}"
+                                             p:placeholder="Buscar documento..." />
+                                <h:outputLabel for="searchDocuments" value="Buscar documento" />
+                            </div>
+                            <h:commandLink styleClass="btn btn-primary d-flex align-items-center justify-content-center gap-2"
+                                           action="#{medicoDocumentosController.filtrar}">
+                                <i class="fas fa-search"></i>
+                                <span>Buscar</span>
+                            </h:commandLink>
+                            <h:commandLink styleClass="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2"
+                                           action="#{medicoDocumentosController.limpiarFiltros}">
+                                <i class="fas fa-eraser"></i>
+                                <span>Limpiar</span>
+                            </h:commandLink>
+                        </div>
+                    </h:form>
+
+                    <h:form id="documentosForm">
+                        <h:messages globalOnly="true" styleClass="jsf-alert-source d-none" />
+                        <div class="documents-grid" aria-live="polite">
+                            <ui:repeat value="#{medicoDocumentosController.documentos}" var="documento">
+                                <article class="document-card" tabindex="0">
+                                    <div class="document-icon">
+                                        <i class="fas #{documento.extension eq 'pdf' ? 'fa-file-pdf' : 'fa-file-alt'}" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="document-name">#{documento.nombreArchivo}</div>
+                                    <div class="document-date">
+                                        Subido:
+                                        <h:outputText value="#{medicoDocumentosController.formatearFechaHora(documento.fechaSubida)}" />
+                                    </div>
+                                    <div class="document-size">
+                                        #{documento.tipoDocumento.nombre} - #{medicoDocumentosController.formatearTamano(documento.tamanoArchivo)}
+                                    </div>
+                                    <p class="small text-muted px-3 mb-2">
+                                        #{empty documento.descripcion ? 'Sin descripción registrada.' : documento.descripcion}
+                                    </p>
+                                    <p class="small text-muted px-3 mb-3">
+                                        Vence:
+                                        <h:outputText value="#{medicoDocumentosController.formatearFecha(documento.fechaVencimiento)}" />
+                                    </p>
+                                    <div class="document-actions" aria-label="Acciones del documento">
+                                        <h:commandLink styleClass="action-btn"
+                                                       title="Ver ruta registrada"
+                                                       action="#{medicoDocumentosController.descargar(documento)}">
+                                            <i class="fas fa-download" aria-hidden="true"></i>
+                                        </h:commandLink>
+                                    </div>
+                                </article>
+                            </ui:repeat>
+
+                            <h:panelGroup rendered="#{empty medicoDocumentosController.documentos}">
+                                <div class="empty-state" style="grid-column: 1 / -1;">
+                                    <i class="fas fa-folder-open" aria-hidden="true"></i>
+                                    <h3>No hay documentos disponibles</h3>
+                                    <p>No se encontraron archivos para los filtros seleccionados.</p>
+                                </div>
+                            </h:panelGroup>
+                        </div>
+
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 px-2 py-3">
+                            <small class="text-muted">
+                                Página #{medicoDocumentosController.pagina} de #{medicoDocumentosController.totalPaginas}
+                            </small>
+                            <nav aria-label="Paginación de documentos">
+                                <ul class="pagination pagination-sm mb-0">
+                                    <ui:repeat value="#{medicoDocumentosController.paginas}" var="pagina">
+                                        <li class="page-item #{pagina eq medicoDocumentosController.pagina ? 'active' : ''}">
+                                            <h:commandLink styleClass="page-link"
+                                                           value="#{pagina}"
+                                                           action="#{medicoDocumentosController.irPagina(pagina)}" />
+                                        </li>
+                                    </ui:repeat>
+                                </ul>
+                            </nav>
+                        </div>
+                    </h:form>
+                </section>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>
+

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <nav class="hfms-nav hfms-nav--main" aria-label="Menú principal">
+        <div class="hfms-nav__container">
+            <button class="hfms-nav__toggle"
+                    type="button"
+                    aria-label="Abrir menú de navegación"
+                    aria-expanded="false"
+                    aria-controls="mainMenu">
+                <i class="fas fa-bars hfms-nav__toggle-icon" aria-hidden="true"></i>
+            </button>
+            <span class="hfms-nav__mobile-title">Menú principal</span>
+
+            <ul class="hfms-nav__menu" id="mainMenu">
+                <li class="hfms-nav__item">
+                    <h:link outcome="/views/medico/inicio.xhtml"
+                            styleClass="hfms-nav__link #{view.viewId.contains('inicio') ? 'hfms-nav__link--active' : ''}">
+                        <i class="fas fa-home-alt" aria-hidden="true"></i>
+                        <span>Inicio</span>
+                    </h:link>
+                </li>
+                <li class="hfms-nav__item">
+                    <h:link outcome="/views/medico/asistencias.xhtml"
+                            styleClass="hfms-nav__link #{view.viewId.contains('asistencias') ? 'hfms-nav__link--active' : ''}">
+                        <i class="fas fa-clipboard-check" aria-hidden="true"></i>
+                        <span>Asistencias</span>
+                    </h:link>
+                </li>
+                <li class="hfms-nav__item">
+                    <h:link outcome="/views/medico/horarios.xhtml"
+                            styleClass="hfms-nav__link #{view.viewId.contains('horarios') ? 'hfms-nav__link--active' : ''}">
+                        <i class="fas fa-calendar-alt" aria-hidden="true"></i>
+                        <span>Horarios</span>
+                    </h:link>
+                </li>
+                <li class="hfms-nav__item">
+                    <h:link outcome="/views/medico/solicitudes.xhtml"
+                            styleClass="hfms-nav__link #{view.viewId.contains('solicitudes') ? 'hfms-nav__link--active' : ''}">
+                        <i class="fas fa-file-medical-alt" aria-hidden="true"></i>
+                        <span>Solicitudes</span>
+                    </h:link>
+                </li>
+                <li class="hfms-nav__item">
+                    <h:link outcome="/views/medico/documentos.xhtml"
+                            styleClass="hfms-nav__link #{view.viewId.contains('documentos') ? 'hfms-nav__link--active' : ''}">
+                        <i class="fas fa-file-medical" aria-hidden="true"></i>
+                        <span>Documentos</span>
+                    </h:link>
+                </li>
+                <li class="hfms-nav__item">
+                    <h:link outcome="/views/medico/configuraciones.xhtml"
+                            styleClass="hfms-nav__link #{view.viewId.contains('configuraciones') ? 'hfms-nav__link--active' : ''}">
+                        <i class="fas fa-cog" aria-hidden="true"></i>
+                        <span>Configuración</span>
+                    </h:link>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</ui:composition>

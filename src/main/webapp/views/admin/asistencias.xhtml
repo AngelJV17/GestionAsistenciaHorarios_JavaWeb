@@ -1,0 +1,415 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Asistencias del Personal | Hospital Félix Mayorca Soto</ui:define>
+
+    <ui:define name="estilos_propios">
+        <style>
+            .attendance-calendar-toolbar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 1rem;
+                flex-wrap: wrap;
+                margin-bottom: 1rem;
+            }
+            .attendance-calendar-title {
+                margin: 0;
+                color: #0f172a;
+                font-size: 1.35rem;
+                font-weight: 800;
+            }
+            .attendance-calendar {
+                display: grid;
+                grid-template-columns: repeat(7, minmax(0, 1fr));
+                overflow: hidden;
+                border: 1px solid #dbe7f6;
+                border-radius: 8px;
+                background: #fff;
+            }
+            .attendance-calendar-head,
+            .attendance-calendar-day {
+                min-width: 0;
+                border-right: 1px solid #e5edf7;
+                border-bottom: 1px solid #e5edf7;
+            }
+            .attendance-calendar-head:nth-child(7n),
+            .attendance-calendar-day:nth-child(7n) {
+                border-right: 0;
+            }
+            .attendance-calendar-head {
+                padding: .65rem .5rem;
+                background: #f8fafc;
+                color: #0d47a1;
+                font-size: .8rem;
+                font-weight: 800;
+                text-align: center;
+            }
+            .attendance-calendar-day {
+                min-height: 112px;
+                padding: .45rem;
+                background: #fff;
+            }
+            .attendance-calendar-day.is-muted { background: #f8fafc; color: #94a3b8; }
+            .attendance-calendar-day.is-today { background: #fff8e1; }
+            .calendar-day-number {
+                display: block;
+                margin-bottom: .35rem;
+                color: #1565c0;
+                font-size: .82rem;
+                font-weight: 800;
+                text-align: right;
+            }
+            .calendar-event {
+                display: block;
+                margin-top: .2rem;
+                overflow: hidden;
+                padding: .22rem .35rem;
+                border-radius: 5px;
+                color: #fff;
+                font-size: .68rem;
+                font-weight: 800;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .calendar-event.asistio { background: #43a047; }
+            .calendar-event.tardanza { background: #fb8c00; }
+            .calendar-event.falta { background: #e53935; }
+            .calendar-event.justificado { background: #1e88e5; }
+            .calendar-event.default { background: #64748b; }
+            .attendance-calendar-list {
+                display: grid;
+                overflow: hidden;
+                border: 1px solid #dbe7f6;
+                border-radius: 8px;
+                background: #fff;
+            }
+            .attendance-calendar-list-item {
+                display: grid;
+                gap: .35rem;
+                padding: .55rem .65rem;
+                border-bottom: 1px solid #e5edf7;
+            }
+            .attendance-calendar-list-head {
+                display: flex;
+                justify-content: space-between;
+                gap: 1rem;
+                color: #0d47a1;
+                font-size: .82rem;
+                font-weight: 800;
+            }
+            .attendance-calendar-list-body {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: .75rem;
+                flex-wrap: wrap;
+                color: #334155;
+                font-size: .8rem;
+            }
+            .status-dot {
+                display: inline-block;
+                width: .45rem;
+                height: .45rem;
+                border-radius: 999px;
+            }
+            .status-dot.asistio { background: #43a047; }
+            .status-dot.tardanza { background: #fb8c00; }
+            .status-dot.falta { background: #e53935; }
+            .status-dot.justificado { background: #1e88e5; }
+            .status-dot.default { background: #64748b; }
+            @media (max-width: 760px) {
+                .attendance-calendar-head { padding: .4rem .1rem; font-size: .62rem; }
+                .attendance-calendar-day { min-height: 62px; padding: .22rem; }
+                .calendar-day-number { margin-bottom: .2rem; font-size: .66rem; }
+                .calendar-event { padding: .12rem .16rem; font-size: .55rem; line-height: 1.05; white-space: normal; }
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="module-page">
+            <section class="rounded-3 shadow p-4 mb-4 hero-banner">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-12">
+                        <h1 class="h2 fw-bold mb-2 text-white">
+                            <i class="fas fa-calendar-check me-2"></i>Asistencias del Personal
+                        </h1>
+                        <p class="mb-0 text-white opacity-85">Consulte el historial y calendario mensual de asistencias de trabajadores y médicos.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats-grid mb-4">
+                <article class="stat-card stat-card-primary bg-white shadow-sm">
+                    <span class="stat-label">Registros</span>
+                    <span class="stat-value">#{adminAsistenciasController.totalAsistencias}</span>
+                    <span class="stat-trend trend-primary">#{adminAsistenciasController.mesAnioTexto}</span>
+                </article>
+                <article class="stat-card stat-card-warning bg-white shadow-sm">
+                    <span class="stat-label">Tardanzas</span>
+                    <span class="stat-value">#{adminAsistenciasController.totalTardanzas}</span>
+                    <span class="stat-trend trend-warning">Mes seleccionado</span>
+                </article>
+                <article class="stat-card stat-card-danger bg-white shadow-sm">
+                    <span class="stat-label">Faltas</span>
+                    <span class="stat-value">#{adminAsistenciasController.totalFaltas}</span>
+                    <span class="stat-trend trend-danger">Mes seleccionado</span>
+                </article>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-filter"></i>
+                    <div>
+                        <h3>Filtros</h3>
+                        <small class="text-muted">Seleccione empleado y periodo para actualizar tabla y calendario.</small>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h:form id="filtrosAsistenciasAdminForm">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-5">
+                                <div class="form-floating">
+                                    <h:selectOneMenu id="empleado" styleClass="form-select" value="#{adminAsistenciasController.filtroEmpleadoId}">
+                                        <f:selectItem itemValue="#{null}" itemLabel="Todos los empleados" noSelectionOption="true" />
+                                        <f:selectItems value="#{adminAsistenciasController.empleados}" var="empleado" itemValue="#{empleado.id}" itemLabel="#{empleado.nombreCompleto}" />
+                                    </h:selectOneMenu>
+                                    <h:outputLabel for="empleado" value="Empleado" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-floating">
+                                    <h:selectOneMenu id="mes" styleClass="form-select" value="#{adminAsistenciasController.mesFiltro}">
+                                        <f:selectItem itemValue="1" itemLabel="Enero" />
+                                        <f:selectItem itemValue="2" itemLabel="Febrero" />
+                                        <f:selectItem itemValue="3" itemLabel="Marzo" />
+                                        <f:selectItem itemValue="4" itemLabel="Abril" />
+                                        <f:selectItem itemValue="5" itemLabel="Mayo" />
+                                        <f:selectItem itemValue="6" itemLabel="Junio" />
+                                        <f:selectItem itemValue="7" itemLabel="Julio" />
+                                        <f:selectItem itemValue="8" itemLabel="Agosto" />
+                                        <f:selectItem itemValue="9" itemLabel="Septiembre" />
+                                        <f:selectItem itemValue="10" itemLabel="Octubre" />
+                                        <f:selectItem itemValue="11" itemLabel="Noviembre" />
+                                        <f:selectItem itemValue="12" itemLabel="Diciembre" />
+                                    </h:selectOneMenu>
+                                    <h:outputLabel for="mes" value="Mes" />
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-floating">
+                                    <h:inputText id="anio" styleClass="form-control" value="#{adminAsistenciasController.anioFiltro}" p:type="number" />
+                                    <h:outputLabel for="anio" value="Año" />
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <h:commandButton value="Filtrar" styleClass="btn btn-primary w-100" action="#{adminAsistenciasController.buscar}" />
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-calendar-days"></i>
+                    <div>
+                        <h3>Calendario mensual</h3>
+                        <small class="text-muted">Vista consolidada según filtros actuales.</small>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="attendance-calendar-toolbar">
+                        <div>
+                            <h3 class="attendance-calendar-title">#{adminAsistenciasController.mesAnioTexto}</h3>
+                            <small class="text-muted">Asistencias registradas por día</small>
+                        </div>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button type="button" class="btn btn-secondary" id="calendarMonthMode">Mes</button>
+                            <button type="button" class="btn btn-outline-secondary" id="calendarListMode">Lista</button>
+                        </div>
+                    </div>
+                    <div id="attendanceCalendar" class="attendance-calendar" data-month="#{adminAsistenciasController.mesFiltro}" data-year="#{adminAsistenciasController.anioFiltro}"></div>
+                    <div id="attendanceCalendarList" class="attendance-calendar-list d-none"></div>
+                </div>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-table"></i>
+                    <div>
+                        <h3>Historial de asistencias</h3>
+                        <small class="text-muted">Detalle mensual de entradas, salidas y estados.</small>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 system-table" id="tablaAsistenciasAdmin">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th class="ps-4">Empleado</th>
+                                    <th>Fecha</th>
+                                    <th>Entrada</th>
+                                    <th>Salida</th>
+                                    <th>Estado</th>
+                                    <th>Tardanza</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ui:repeat value="#{adminAsistenciasController.asistencias}" var="asistencia">
+                                    <tr class="fila-asistencia"
+                                        data-fecha="#{asistencia.fechaAsistencia}"
+                                        data-empleado="#{asistencia.empleado.nombreCompleto}"
+                                        data-estado="#{adminAsistenciasController.obtenerEstadoCodigo(asistencia)}"
+                                        data-estado-texto="#{adminAsistenciasController.obtenerEstadoTexto(asistencia)}">
+                                        <td class="ps-4"><strong>#{asistencia.empleado.nombreCompleto}</strong><br/><small class="text-muted">#{asistencia.empleado.codigoEmpleado}</small></td>
+                                        <td>#{adminAsistenciasController.formatearFecha(asistencia.fechaAsistencia)}</td>
+                                        <td>#{adminAsistenciasController.formatearHora(asistencia.fechaHoraEntrada)}</td>
+                                        <td>#{adminAsistenciasController.formatearHora(asistencia.fechaHoraSalida)}</td>
+                                        <td><span class="#{adminAsistenciasController.obtenerEstadoClase(asistencia)}">#{adminAsistenciasController.obtenerEstadoTexto(asistencia)}</span></td>
+                                        <td>#{adminAsistenciasController.formatearDuracionMinutos(asistencia.minutosTardanza)}</td>
+                                    </tr>
+                                </ui:repeat>
+                                <h:panelGroup rendered="#{empty adminAsistenciasController.asistencias}">
+                                    <tr><td colspan="6" class="text-center text-muted py-4">No hay asistencias registradas para los filtros seleccionados.</td></tr>
+                                </h:panelGroup>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <script>
+        //<![CDATA[
+            (function () {
+                function normalizeEstado(value) {
+                    value = String(value || '').toUpperCase();
+                    return value === 'ASISTIÓ' ? 'ASISTIO' : value;
+                }
+                function estadoClass(estado) {
+                    estado = normalizeEstado(estado);
+                    if (estado === 'ASISTIO') return 'asistio';
+                    if (estado === 'TARDANZA') return 'tardanza';
+                    if (estado === 'FALTA') return 'falta';
+                    if (estado === 'PERMISO' || estado === 'LICENCIA') return 'justificado';
+                    return 'default';
+                }
+                function fechaLarga(fechaIso) {
+                    var partes = String(fechaIso || '').split('-');
+                    if (partes.length !== 3) return fechaIso;
+                    var fecha = new Date(Number(partes[0]), Number(partes[1]) - 1, Number(partes[2]));
+                    return fecha.toLocaleDateString('es-PE', {day: 'numeric', month: 'long', year: 'numeric'});
+                }
+                function diaSemana(fechaIso) {
+                    var partes = String(fechaIso || '').split('-');
+                    if (partes.length !== 3) return '';
+                    var fecha = new Date(Number(partes[0]), Number(partes[1]) - 1, Number(partes[2]));
+                    return fecha.toLocaleDateString('es-PE', {weekday: 'long'});
+                }
+                function asistenciasDesdeTabla() {
+                    return Array.from(document.querySelectorAll('.fila-asistencia')).map(function (fila) {
+                        return {
+                            fecha: fila.getAttribute('data-fecha'),
+                            empleado: fila.getAttribute('data-empleado') || 'Empleado',
+                            estado: normalizeEstado(fila.getAttribute('data-estado')),
+                            estadoTexto: fila.getAttribute('data-estado-texto') || 'Sin registro'
+                        };
+                    }).filter(function (item) { return item.fecha; });
+                }
+                function renderCalendar() {
+                    var calendar = document.getElementById('attendanceCalendar');
+                    var list = document.getElementById('attendanceCalendarList');
+                    if (!calendar || !list) return;
+                    var month = Number(calendar.getAttribute('data-month')) || (new Date().getMonth() + 1);
+                    var year = Number(calendar.getAttribute('data-year')) || new Date().getFullYear();
+                    var events = asistenciasDesdeTabla();
+                    var byDate = {};
+                    events.forEach(function (event) {
+                        byDate[event.fecha] = byDate[event.fecha] || [];
+                        byDate[event.fecha].push(event);
+                    });
+                    calendar.innerHTML = '';
+                    ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'].forEach(function (day) {
+                        var head = document.createElement('div');
+                        head.className = 'attendance-calendar-head';
+                        head.textContent = day;
+                        calendar.appendChild(head);
+                    });
+                    var first = new Date(year, month - 1, 1);
+                    var lastDay = new Date(year, month, 0).getDate();
+                    var startOffset = first.getDay();
+                    var todayIso = new Date().toISOString().slice(0, 10);
+                    var totalCells = Math.ceil((startOffset + lastDay) / 7) * 7;
+                    for (var cell = 0; cell < totalCells; cell++) {
+                        var dayNumber = cell - startOffset + 1;
+                        var day = document.createElement('div');
+                        day.className = 'attendance-calendar-day';
+                        if (dayNumber < 1 || dayNumber > lastDay) {
+                            day.classList.add('is-muted');
+                            calendar.appendChild(day);
+                            continue;
+                        }
+                        var iso = year + '-' + String(month).padStart(2, '0') + '-' + String(dayNumber).padStart(2, '0');
+                        if (iso === todayIso) day.classList.add('is-today');
+                        var number = document.createElement('span');
+                        number.className = 'calendar-day-number';
+                        number.textContent = dayNumber;
+                        day.appendChild(number);
+                        (byDate[iso] || []).slice(0, 3).forEach(function (event) {
+                            var badge = document.createElement('span');
+                            badge.className = 'calendar-event ' + estadoClass(event.estado);
+                            badge.textContent = event.empleado + ' - ' + event.estadoTexto;
+                            day.appendChild(badge);
+                        });
+                        calendar.appendChild(day);
+                    }
+                    list.innerHTML = '';
+                    if (!events.length) {
+                        list.innerHTML = '<div class="empty-state"><i class="fas fa-clipboard-list"></i><h3>No hay registros</h3></div>';
+                    } else {
+                        events.slice().reverse().forEach(function (event) {
+                            var item = document.createElement('div');
+                            var clase = estadoClass(event.estado);
+                            item.className = 'attendance-calendar-list-item';
+                            item.innerHTML = '<div class="attendance-calendar-list-head"><span>' + fechaLarga(event.fecha) + '</span><span>' + diaSemana(event.fecha) + '</span></div>'
+                                + '<div class="attendance-calendar-list-body"><span><small>Todo el día</small> <span class="status-dot ' + clase + '"></span> ' + event.empleado + ' - ' + event.estadoTexto + '</span></div>';
+                            list.appendChild(item);
+                        });
+                    }
+                }
+                function bindCalendarMode() {
+                    var monthBtn = document.getElementById('calendarMonthMode');
+                    var listBtn = document.getElementById('calendarListMode');
+                    var calendar = document.getElementById('attendanceCalendar');
+                    var list = document.getElementById('attendanceCalendarList');
+                    if (!monthBtn || !listBtn || !calendar || !list) return;
+                    monthBtn.addEventListener('click', function () {
+                        calendar.classList.remove('d-none');
+                        list.classList.add('d-none');
+                        monthBtn.className = 'btn btn-secondary';
+                        listBtn.className = 'btn btn-outline-secondary';
+                    });
+                    listBtn.addEventListener('click', function () {
+                        list.classList.remove('d-none');
+                        calendar.classList.add('d-none');
+                        listBtn.className = 'btn btn-secondary';
+                        monthBtn.className = 'btn btn-outline-secondary';
+                    });
+                    if (window.innerWidth <= 760) listBtn.click();
+                }
+                document.addEventListener('DOMContentLoaded', function () {
+                    renderCalendar();
+                    bindCalendarMode();
+                });
+            })();
+        //]]>
+        </script>
+    </ui:define>
+</ui:composition>

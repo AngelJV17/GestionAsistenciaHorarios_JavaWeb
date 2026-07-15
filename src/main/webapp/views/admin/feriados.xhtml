@@ -1,0 +1,263 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Gestión de Feriados | Hospital Félix Mayorca Soto</ui:define>
+
+    <ui:define name="content">
+        <div class="module-page">
+
+            <section class="rounded-3 shadow p-4 mb-4 hero-banner">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-8">
+                        <h1 class="h2 fw-bold mb-2 text-white">
+                            <i class="fas fa-calendar-xmark me-2"></i>Gestión de Feriados
+                        </h1>
+                        <p class="mb-0 text-white opacity-85">
+                            Administre fechas no laborables, recuperables y eventos institucionales.
+                        </p>
+                    </div>
+                    <div class="col-lg-4">
+                        <h:form styleClass="hero-actions justify-content-lg-end">
+                            <h:commandLink styleClass="hero-action-btn" action="#{feriadosController.nuevoFeriado}">
+                                <i class="fas fa-calendar-plus fs-4"></i>
+                                <span class="hero-action-btn__text">
+                                    <span class="hero-action-btn__title">Nuevo Feriado</span>
+                                    <span class="hero-action-btn__subtitle">Registrar fecha</span>
+                                </span>
+                            </h:commandLink>
+                        </h:form>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats-grid mb-4" aria-label="Resumen de feriados">
+                <article class="stat-card stat-card-primary bg-white shadow-sm">
+                    <span class="stat-label">Feriados</span>
+                    <span class="stat-value">#{feriadosController.totalFeriados}</span>
+                    <span class="stat-trend trend-primary">Registrados</span>
+                </article>
+
+                <article class="stat-card stat-card-success bg-white shadow-sm">
+                    <span class="stat-label">Recuperables</span>
+                    <span class="stat-value">#{feriadosController.totalRecuperables}</span>
+                    <span class="stat-trend trend-success">Con compensación</span>
+                </article>
+
+                <article class="stat-card stat-card-warning bg-white shadow-sm">
+                    <span class="stat-label">No recuperables</span>
+                    <span class="stat-value">#{feriadosController.totalFeriados - feriadosController.totalRecuperables}</span>
+                    <span class="stat-trend trend-warning">Calendario regular</span>
+                </article>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-filter"></i>
+                    <div>
+                        <h3>Filtros de búsqueda</h3>
+                        <small class="text-muted">Filtre feriados por tipo de recuperación o coincidencia directa.</small>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <h:form id="filtrosFeriadosForm">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-5">
+                                <div class="form-floating">
+                                    <h:selectOneMenu id="filtroTipo" styleClass="form-select"
+                                                     value="#{feriadosController.filtroTipo}">
+                                        <f:selectItem itemValue="todos" itemLabel="Todos" />
+                                        <f:selectItem itemValue="recuperable" itemLabel="Recuperable" />
+                                        <f:selectItem itemValue="no_recuperable" itemLabel="No recuperable" />
+                                    </h:selectOneMenu>
+                                    <h:outputLabel for="filtroTipo" value="Tipo" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-5">
+                                <div class="form-floating">
+                                    <h:inputText id="busquedaFeriado"
+                                                 styleClass="form-control"
+                                                 value="#{feriadosController.busqueda}"
+                                                 p:placeholder="Buscar feriado..." />
+                                    <h:outputLabel for="busquedaFeriado" value="Buscar feriado" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <h:commandLink styleClass="btn btn-primary btn-filter-submit w-100 d-flex align-items-center justify-content-center gap-2"
+                                               action="#{feriadosController.filtrar}"
+                                               >
+                                    <i class="fas fa-filter"></i>
+                                    <span>Filtrar</span>
+                                </h:commandLink>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-calendar-days"></i>
+                    <div>
+                        <h3>Listado de feriados</h3>
+                        <small class="text-muted">Fechas especiales registradas para el control de asistencia.</small>
+                    </div>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 system-table">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th class="ps-4">Fecha</th>
+                                    <th>Descripción</th>
+                                    <th>Recuperable</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ui:repeat value="#{feriadosController.feriados}" var="feriado">
+                                    <tr>
+                                        <td class="ps-4 fw-semibold">#{feriado.fecha}</td>
+                                        <td>
+                                            <div class="fw-semibold">#{empty feriado.descripcion ? 'Feriado institucional' : feriado.descripcion}</div>
+                                            <small class="text-muted">Calendario hospitalario</small>
+                                        </td>
+                                        <td>
+                                            <span class="#{feriado.esRecuperable ? 'badge approved' : 'badge neutral'}">
+                                                #{feriado.esRecuperable ? 'Sí' : 'No'}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <h:form>
+                                                <h:commandLink styleClass="btn btn-sm btn-outline-primary"
+                                                               title="Editar"
+                                                               action="#{feriadosController.editarFeriado(feriado.id)}">
+                                                    <i class="fas fa-pen-to-square"></i>
+                                                </h:commandLink>
+                                            </h:form>
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 px-4 py-3 border-top">
+                    <small class="text-muted">Página #{feriadosController.pagina} de #{feriadosController.totalPaginas}</small>
+                    <nav aria-label="Paginación de feriados">
+                        <h:form>
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item #{feriadosController.pagina le 1 ? 'disabled' : ''}">
+                                    <h:commandLink styleClass="page-link" action="#{feriadosController.paginaAnterior}">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </h:commandLink>
+                                </li>
+                                <ui:repeat value="#{feriadosController.paginas}" var="pagina">
+                                    <li class="page-item #{pagina eq feriadosController.pagina ? 'active' : ''}">
+                                        <h:commandLink styleClass="page-link" action="#{feriadosController.irPagina(pagina)}">
+                                            #{pagina}
+                                        </h:commandLink>
+                                    </li>
+                                </ui:repeat>
+                                <li class="page-item #{feriadosController.pagina ge feriadosController.totalPaginas ? 'disabled' : ''}">
+                                    <h:commandLink styleClass="page-link" action="#{feriadosController.paginaSiguiente}">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </h:commandLink>
+                                </li>
+                            </ul>
+                        </h:form>
+                    </nav>
+                </div>
+            </section>
+
+        </div>
+
+        <div class="modal fade" id="modalFeriado" tabindex="-1" aria-labelledby="modalFeriadoLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                    <h:form id="formFeriado">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="modalFeriadoLabel">
+                                <i class="fas fa-calendar-plus me-2"></i>
+                                #{empty feriadosController.feriadoSeleccionado.id ? 'Nuevo Feriado' : 'Editar Feriado'}
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputText id="fecha"
+                                                     styleClass="form-control"
+                                                     required="true"
+                                                     requiredMessage="Ingrese la fecha del feriado."
+                                                     value="#{feriadosController.feriadoSeleccionado.fecha}"
+                                                     p:type="date"
+                                                     p:placeholder="Fecha" />
+                                        <h:outputLabel for="fecha" value="Fecha" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:selectOneMenu id="recuperable"
+                                                         styleClass="form-select"
+                                                         value="#{feriadosController.feriadoSeleccionado.esRecuperable}">
+                                            <f:selectItem itemValue="false" itemLabel="No recuperable" />
+                                            <f:selectItem itemValue="true" itemLabel="Recuperable" />
+                                        </h:selectOneMenu>
+                                        <h:outputLabel for="recuperable" value="Tipo de feriado" />
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <h:inputTextarea id="descripcion"
+                                                         styleClass="form-control"
+                                                         rows="3"
+                                                         required="true"
+                                                         requiredMessage="Ingrese la descripción del feriado."
+                                                         value="#{feriadosController.feriadoSeleccionado.descripcion}"
+                                                         p:placeholder="Descripción">
+                                            <f:validateLength minimum="3" maximum="255" />
+                                        </h:inputTextarea>
+                                        <h:outputLabel for="descripcion" value="Descripción" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <h:commandButton styleClass="btn btn-primary"
+                                             value="Guardar Feriado"
+                                             action="#{feriadosController.guardarFeriado}" />
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+        <h:panelGroup rendered="#{feriadosController.mostrarModal}">
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const modalElement = document.getElementById('modalFeriado');
+                    if (modalElement &amp;&amp; window.bootstrap) {
+                        new bootstrap.Modal(modalElement).show();
+                    }
+                });
+            </script>
+        </h:panelGroup>
+
+    </ui:define>
+</ui:composition>

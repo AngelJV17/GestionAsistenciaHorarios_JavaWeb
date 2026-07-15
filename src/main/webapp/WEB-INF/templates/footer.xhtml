@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
+
+    <footer class="site-footer" role="contentinfo">
+        <div class="container footer-wrapper">
+            <div class="footer-brand">
+                <h:graphicImage library="images"
+                                name="logo-HFMS.png"
+                                alt="Hospital Félix Mayorca Soto"
+                                styleClass="footer-logo" />
+                <p class="footer-description">Sistema de Gestión de Asistencia y Horarios</p>
+            </div>
+
+            <nav class="footer-links" aria-label="Canales institucionales">
+                <h:outputLink value="https://www.facebook.com/share/1H2EVg9Wqm/"
+                              p:target="_blank"
+                              p:rel="noopener noreferrer">
+                    <i class="fab fa-facebook-f" aria-hidden="true"></i>
+                    <span>Facebook</span>
+                </h:outputLink>
+                <h:outputLink value="https://youtube.com"
+                              p:target="_blank"
+                              p:rel="noopener noreferrer">
+                    <i class="fab fa-youtube" aria-hidden="true"></i>
+                    <span>YouTube</span>
+                </h:outputLink>
+                <h:outputLink value="https://web.whatsapp.com/"
+                              p:target="_blank"
+                              p:rel="noopener noreferrer">
+                    <i class="fab fa-whatsapp" aria-hidden="true"></i>
+                    <span>Soporte</span>
+                </h:outputLink>
+            </nav>
+
+            <address class="footer-contact">
+                <h:outputLink value="tel:+51123456789">
+                    <i class="fas fa-phone-alt" aria-hidden="true"></i>
+                    <span>+51 123 456 789</span>
+                </h:outputLink>
+                <h:outputLink value="mailto:hospitalmayorcasoto@hospital.gob.pe">
+                    <i class="fas fa-envelope" aria-hidden="true"></i>
+                    <span>hospitalmayorcasoto@hospital.gob.pe</span>
+                </h:outputLink>
+            </address>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 Hospital Félix Mayorca Soto. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+</ui:composition>

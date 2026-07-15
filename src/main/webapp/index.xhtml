@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      lang="es">
+
+    <f:metadata>
+        <f:viewAction action="#{inicioController.redirigirLogin}" />
+    </f:metadata>
+
+    <h:head>
+        <title>Redirigiendo...</title>
+        <meta charset="UTF-8" />
+    </h:head>
+
+    <h:body>
+        <p>Redirigiendo al inicio de sesión...</p>
+        <h:link outcome="/views/login/login.xhtml" value="Ir al login" />
+    </h:body>
+</html>

@@ -1,0 +1,31 @@
+# Maven / compilados
+target/
+build/
+dist/
+
+# NetBeans
+nbproject/private/
+*.log
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+
+# Archivos temporales
+*.tmp
+*.bak
+*.swp
+
+# Archivos comprimidos o backups
+*.zip
+*.rar
+*.7z
+
+# Configuraciones sensibles si existieran
+.env
+*.env

@@ -1,0 +1,254 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Gestión de Usuarios | Hospital Félix Mayorca Soto</ui:define>
+
+    <ui:define name="content">
+        <div class="module-page">
+            <section class="rounded-3 shadow p-4 mb-4 hero-banner">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-8">
+                        <h1 class="h2 fw-bold mb-2 text-white">
+                            <i class="fas fa-users-cog me-2"></i>Gestión de Usuarios
+                        </h1>
+                        <p class="mb-0 text-white opacity-85">Administre cuentas, estados de acceso y asignación inicial de roles.</p>
+                    </div>
+                    <div class="col-lg-4">
+                        <h:form styleClass="hero-actions justify-content-lg-end">
+                            <h:commandLink styleClass="hero-action-btn" action="#{usuariosController.nuevoUsuario}">
+                                <i class="fas fa-user-plus fs-4"></i>
+                                <span class="hero-action-btn__text">
+                                    <span class="hero-action-btn__title">Nuevo Usuario</span>
+                                    <span class="hero-action-btn__subtitle">Crear cuenta</span>
+                                </span>
+                            </h:commandLink>
+                        </h:form>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats-grid mb-4" aria-label="Resumen de usuarios">
+                <article class="stat-card stat-card-primary bg-white shadow-sm">
+                    <span class="stat-label">Usuarios</span>
+                    <span class="stat-value">#{usuariosController.totalUsuarios}</span>
+                    <span class="stat-trend trend-primary">Registrados</span>
+                </article>
+                <article class="stat-card stat-card-success bg-white shadow-sm">
+                    <span class="stat-label">Roles</span>
+                    <span class="stat-value">#{usuariosController.roles.size()}</span>
+                    <span class="stat-trend trend-success">Disponibles</span>
+                </article>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-filter"></i>
+                    <div>
+                        <h3>Filtros de búsqueda</h3>
+                        <small class="text-muted">Filtre usuarios por estado o coincidencia directa.</small>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h:form id="filtrosUsuariosForm">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-5">
+                                <div class="form-floating">
+                                    <h:selectOneMenu id="estadoFiltro" styleClass="form-select" value="#{usuariosController.filtroEstado}">
+                                        <f:selectItem itemValue="todos" itemLabel="Todos" />
+                                        <f:selectItem itemValue="activo" itemLabel="Activo" />
+                                        <f:selectItem itemValue="inactivo" itemLabel="Inactivo" />
+                                    </h:selectOneMenu>
+                                    <h:outputLabel for="estadoFiltro" value="Estado" />
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-floating">
+                                    <h:inputText id="busquedaUsuario" styleClass="form-control"
+                                                 value="#{usuariosController.busqueda}"
+                                                 p:placeholder="Buscar usuario..." />
+                                    <h:outputLabel for="busquedaUsuario" value="Buscar usuario" />
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <h:commandButton value="Filtrar" styleClass="btn btn-primary btn-filter-submit w-100"
+                                                 action="#{usuariosController.filtrar}" />
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-users"></i>
+                    <div>
+                        <h3>Listado de usuarios</h3>
+                        <small class="text-muted">Cuentas registradas para acceso al sistema.</small>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <h:messages globalOnly="true" styleClass="jsf-alert-source d-none" />
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 system-table">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th class="ps-4">Usuario</th>
+                                    <th>Correo de recuperación</th>
+                                    <th>Último acceso</th>
+                                    <th>Roles</th>
+                                    <th>Estado</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ui:repeat value="#{usuariosController.usuarios}" var="usuario">
+                                    <tr>
+                                        <td class="ps-4"><strong>#{usuario.nombreUsuario}</strong></td>
+                                        <td>#{empty usuario.correoRecuperacion ? 'Sin correo' : usuario.correoRecuperacion}</td>
+                                        <td>#{empty usuario.ultimoAcceso ? 'Sin acceso registrado' : usuario.ultimoAcceso}</td>
+                                        <td><strong>#{usuariosController.obtenerRolesUsuario(usuario.id)}</strong></td>
+                                        <td>
+                                            <span class="#{usuario.estadoId eq 1 ? 'badge approved' : 'badge rejected'}">
+                                                #{usuario.estadoId eq 1 ? 'Activo' : 'Inactivo'}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <h:form>
+                                                <div class="d-flex gap-1 justify-content-center">
+                                                    <h:commandLink styleClass="btn btn-sm btn-outline-primary" title="Editar" action="#{usuariosController.editarUsuario(usuario.id)}">
+                                                        <i class="fas fa-pen-to-square"></i>
+                                                    </h:commandLink>
+                                                    <h:commandLink styleClass="btn btn-sm btn-outline-danger"
+                                                                   title="#{usuario.estadoId eq 1 ? 'Desactivar' : 'Activar'}"
+                                                                   action="#{usuariosController.cambiarEstado(usuario.id)}">
+                                                        <i class="fas #{usuario.estadoId eq 1 ? 'fa-ban' : 'fa-check'}"></i>
+                                                    </h:commandLink>
+                                                </div>
+                                            </h:form>
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+                                <h:panelGroup rendered="#{empty usuariosController.usuarios}">
+                                    <tr><td colspan="6" class="text-center text-muted py-4">No hay usuarios registrados.</td></tr>
+                                </h:panelGroup>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 px-4 py-3 border-top">
+                    <small class="text-muted">Página #{usuariosController.pagina} de #{usuariosController.totalPaginas}</small>
+                    <nav aria-label="Paginación de usuarios">
+                        <h:form>
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item #{usuariosController.pagina le 1 ? 'disabled' : ''}">
+                                    <h:commandLink styleClass="page-link" action="#{usuariosController.paginaAnterior}">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </h:commandLink>
+                                </li>
+                                <ui:repeat value="#{usuariosController.paginas}" var="pagina">
+                                    <li class="page-item #{pagina eq usuariosController.pagina ? 'active' : ''}">
+                                        <h:commandLink styleClass="page-link" action="#{usuariosController.irPagina(pagina)}">#{pagina}</h:commandLink>
+                                    </li>
+                                </ui:repeat>
+                                <li class="page-item #{usuariosController.pagina ge usuariosController.totalPaginas ? 'disabled' : ''}">
+                                    <h:commandLink styleClass="page-link" action="#{usuariosController.paginaSiguiente}">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </h:commandLink>
+                                </li>
+                            </ul>
+                        </h:form>
+                    </nav>
+                </div>
+            </section>
+        </div>
+
+        <div class="modal fade" id="modalUsuario" tabindex="-1" aria-labelledby="modalUsuarioLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                    <h:form id="formUsuario">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="modalUsuarioLabel">
+                                <i class="fas fa-user-cog me-2"></i>
+                                #{empty usuariosController.usuarioSeleccionado.id ? 'Nuevo Usuario' : 'Editar Usuario'}
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <h:messages globalOnly="true" styleClass="jsf-alert-source d-none" />
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputText id="nombreUsuario" styleClass="form-control" required="true"
+                                                     value="#{usuariosController.usuarioSeleccionado.nombreUsuario}"
+                                                     p:placeholder="Usuario">
+                                            <f:validateLength minimum="4" maximum="50" />
+                                        </h:inputText>
+                                        <h:outputLabel for="nombreUsuario" value="Usuario" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputSecret id="password" styleClass="form-control"
+                                                       value="#{usuariosController.passwordTemporal}"
+                                                       p:placeholder="Contraseña">
+                                            <f:validateLength maximum="80" />
+                                        </h:inputSecret>
+                                        <h:outputLabel for="password" value="Contraseña nueva" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputText id="correo" styleClass="form-control"
+                                                     value="#{usuariosController.usuarioSeleccionado.correoRecuperacion}"
+                                                     p:type="email" p:placeholder="Correo">
+                                            <f:validateLength maximum="150" />
+                                        </h:inputText>
+                                        <h:outputLabel for="correo" value="Correo de recuperación" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:selectOneMenu id="estado" styleClass="form-select" value="#{usuariosController.usuarioSeleccionado.estadoId}">
+                                            <f:selectItem itemValue="1" itemLabel="Activo" />
+                                            <f:selectItem itemValue="2" itemLabel="Inactivo" />
+                                        </h:selectOneMenu>
+                                        <h:outputLabel for="estado" value="Estado" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:selectOneMenu id="rol" styleClass="form-select" value="#{usuariosController.codigoRolSeleccionado}">
+                                            <f:selectItem itemValue="" itemLabel="Sin cambio de rol" />
+                                            <f:selectItems value="#{usuariosController.roles}" var="rol" itemValue="#{rol.codigo}" itemLabel="#{rol.nombre}" />
+                                        </h:selectOneMenu>
+                                        <h:outputLabel for="rol" value="Rol inicial" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <h:commandButton styleClass="btn btn-primary" value="Guardar Usuario" action="#{usuariosController.guardarUsuario}" />
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+        <h:panelGroup rendered="#{usuariosController.mostrarModal}">
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const modalElement = document.getElementById('modalUsuario');
+                    if (modalElement &amp;&amp; window.bootstrap) {
+                        new bootstrap.Modal(modalElement).show();
+                    }
+                });
+            </script>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>

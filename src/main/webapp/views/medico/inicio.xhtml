@@ -1,0 +1,184 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Inicio Médico - Hospital Félix Mayorca Soto</ui:define>
+
+    <ui:define name="content">
+        <section class="rounded-3 shadow p-4 mb-4 hero-banner">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-8">
+                    <h1 class="h2 fw-bold mb-3 text-white">
+                        <i class="fas fa-hand-wave me-2"></i>Bienvenido, #{inicioController.nombreMostrado}
+                    </h1>
+                    <p class="lead mb-0 text-white opacity-85">
+                        Gestione sus asistencias, horarios, solicitudes y documentos de forma rápida y segura.
+                    </p>
+                </div>
+                <div class="col-lg-4">
+                    <div class="row g-2">
+                        <div class="col-12 col-sm-6 col-lg-12">
+                            <div class="stat-card stat-card-primary bg-white">
+                                <small class="text-dark d-block mb-1">Hoy es</small>
+                                <strong id="currentDate" class="fs-5 text-dark">--</strong>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-lg-12">
+                            <div class="stat-card stat-card-info bg-white">
+                                <small class="text-dark d-block mb-1">Turno de hoy</small>
+                                <strong class="fs-5 text-dark">#{inicioController.horarioHoyRango}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-4">
+            <div class="card border-0 shadow bg-white">
+                <div class="card-body p-4">
+                    <h2 class="h5 border-start border-primary border-4 ps-3 text-primary fw-bold mb-4">Resumen General del Mes</h2>
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 g-4">
+                        <div class="col">
+                            <div class="card card-lift h-100 border-0 shadow-sm">
+                                <div class="card__header px-4 pt-4">
+                                    <i class="fas fa-clipboard-check" aria-hidden="true"></i>
+                                    <div>
+                                        <h3>Asistencias del Mes</h3>
+                                        <small class="text-muted">Resumen operativo de asistencia mensual.</small>
+                                    </div>
+                                </div>
+                                <div class="card__body">
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-12 col-sm-4">
+                                            <div class="stat-card stat-card-success">
+                                                <div class="fs-5 fw-bold text-success">#{inicioController.totalAsistencias}</div>
+                                                <small class="text-muted d-block">Asistencias</small>
+                                                <span class="badge bg-success">Este mes</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-sm-4">
+                                            <div class="stat-card stat-card-warning">
+                                                <div class="fs-5 fw-bold text-warning">#{inicioController.totalTardanzas}</div>
+                                                <small class="text-muted d-block">Tardanzas</small>
+                                                <span class="badge bg-warning text-dark">Este mes</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-sm-4">
+                                            <div class="stat-card stat-card-danger">
+                                                <div class="fs-5 fw-bold text-danger">#{inicioController.totalFaltas}</div>
+                                                <small class="text-muted d-block">Faltas</small>
+                                                <span class="badge bg-danger">Este mes</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h:link outcome="/views/medico/asistencias.xhtml" styleClass="card__footer">
+                                        Ver detalles completos <i class="fas fa-arrow-right ms-1"></i>
+                                    </h:link>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="card card-lift h-100 border-0 shadow-sm">
+                                <div class="card__header px-4 pt-4">
+                                    <i class="fas fa-calendar-day" aria-hidden="true"></i>
+                                    <div>
+                                        <h3>Horario de Hoy</h3>
+                                        <small class="text-muted">Turno activo y programación vigente.</small>
+                                    </div>
+                                </div>
+                                <div class="card__body">
+                                    <p class="mb-2"><strong>Turno:</strong> #{inicioController.horarioHoyNombre}</p>
+                                    <p class="mb-2"><strong>Horario:</strong> #{inicioController.horarioHoyRango}</p>
+                                    <p class="mb-3"><strong>Estado:</strong> <span class="#{inicioController.horarioHoyEstadoClase}">#{inicioController.horarioHoyEstado}</span></p>
+                                    <small class="text-muted d-block mb-3">
+                                        Programación actual: <strong>#{inicioController.proximoHorarioTexto}</strong>
+                                    </small>
+                                    <h:link outcome="/views/medico/horarios.xhtml" styleClass="card__footer">
+                                        Ver horario completo <i class="fas fa-arrow-right ms-1"></i>
+                                    </h:link>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="card card-lift h-100 border-0 shadow-sm">
+                                <div class="card__header px-4 pt-4">
+                                    <i class="fas fa-file-medical-alt" aria-hidden="true"></i>
+                                    <div>
+                                        <h3>Solicitudes y Trámites</h3>
+                                        <small class="text-muted">Estado actual de solicitudes personales.</small>
+                                    </div>
+                                </div>
+                                <div class="card__body">
+                                    <p class="mb-2"><span class="badge bg-warning text-dark">#{inicioController.solicitudesPendientes} Pendientes</span></p>
+                                    <p class="mb-2"><span class="badge bg-success">#{inicioController.solicitudesAprobadas} Aprobadas</span></p>
+                                    <p class="mb-3"><span class="badge bg-danger">#{inicioController.solicitudesRechazadas} Rechazadas</span></p>
+                                    <small class="text-muted d-block mb-3">Última solicitud: #{inicioController.ultimaSolicitudTexto}</small>
+                                    <h:link outcome="/views/medico/solicitudes.xhtml" styleClass="card__footer">
+                                        Gestionar solicitudes <i class="fas fa-arrow-right ms-1"></i>
+                                    </h:link>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="card card-lift h-100 border-0 shadow-sm">
+                                <div class="card__header px-4 pt-4">
+                                    <i class="fas fa-bolt" aria-hidden="true"></i>
+                                    <div>
+                                        <h3>Acciones Rápidas</h3>
+                                        <small class="text-muted">Accesos frecuentes del módulo médico.</small>
+                                    </div>
+                                </div>
+                                <div class="card__body">
+                                    <div class="d-grid gap-3">
+                                        <h:link outcome="/views/medico/solicitudes.xhtml" styleClass="btn btn-outline-primary">
+                                            <i class="fas fa-plus-circle me-2"></i>Nueva Solicitud
+                                        </h:link>
+                                        <h:link outcome="/views/medico/asistencias.xhtml" styleClass="btn btn-outline-primary">
+                                            <i class="fas fa-pen-to-square me-2"></i>Registrar Asistencia
+                                        </h:link>
+                                        <h:link outcome="/views/medico/documentos.xhtml" styleClass="btn btn-outline-primary">
+                                            <i class="fas fa-download me-2"></i>Descargar Documentos
+                                        </h:link>
+                                        <h:link outcome="/views/medico/horarios.xhtml" styleClass="btn btn-outline-primary">
+                                            <i class="fas fa-exchange-alt me-2"></i>Solicitar Cambio de Turno
+                                        </h:link>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-4">
+            <div class="card border-0 shadow bg-white">
+                <div class="card-body p-0">
+                    <h2 class="h5 border-start border-primary border-4 ps-3 text-primary fw-bold mb-0 px-4 pt-4 pb-3">
+                        Actividad Reciente
+                    </h2>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center gap-3">
+                            <span><i class="fas fa-circle-check text-success me-2"></i>#{inicioController.actividadAsistenciaTexto}</span>
+                            <small class="text-muted">#{inicioController.actividadAsistenciaHora}</small>
+                        </li>
+                        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center gap-3">
+                            <span><i class="fas fa-file-alt text-primary me-2"></i>#{inicioController.ultimaSolicitudTexto}</span>
+                            <small class="text-muted">#{inicioController.ultimaSolicitudFecha}</small>
+                        </li>
+                        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center gap-3">
+                            <span><i class="fas fa-download text-info me-2"></i>#{inicioController.documentosVigentes} documentos vigentes disponibles</span>
+                            <small class="text-muted">Documentos</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,68 @@
+﻿<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
+
+    <header class="site-header" role="banner">
+        <div class="container header-content">
+            <h:link outcome="#{usuarioActualController.inicioOutcome}"
+                    styleClass="logo"
+                    title="Ir al inicio"
+                    p:aria-label="Hospital Félix Mayorca Soto, ir al inicio">
+                <h:graphicImage library="images"
+                                name="logo-HFMS.png"
+                                alt="Hospital Félix Mayorca Soto" />
+            </h:link>
+
+            <div class="header-spacer"></div>
+
+            <div class="user-menu dropdown">
+                <button class="user-dropdown-toggle"
+                        type="button"
+                        id="userDropdown"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        aria-label="Abrir menú de usuario">
+                    <div class="user-avatar" aria-hidden="true">#{usuarioActualController.iniciales}</div>
+
+                    <div class="user-data d-none d-md-flex">
+                        <span class="user-name">#{usuarioActualController.nombreMostrado}</span>
+                        <span class="user-role-wrapper">
+                            <span class="user-role">#{usuarioActualController.rolMostrado}</span>
+                            <i class="fas fa-chevron-down dropdown-arrow" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-end shadow"
+                    aria-labelledby="userDropdown">
+                    <li class="d-md-none">
+                        <div class="dropdown-item-text user-info-mobile">
+                            <strong>#{usuarioActualController.nombreMostrado}</strong><br />
+                            <small class="text-muted">#{usuarioActualController.rolMostrado}</small>
+                        </div>
+                    </li>
+                    <li class="d-md-none"><hr class="dropdown-divider" /></li>
+
+                    <ui:fragment rendered="#{sessionScope.esAdmin ne true}">
+                        <li>
+                            <h:link outcome="#{usuarioActualController.perfilOutcome}" styleClass="dropdown-item">
+                                <i class="fas fa-user me-2" aria-hidden="true"></i>Mi perfil
+                            </h:link>
+                        </li>
+                        <li><hr class="dropdown-divider" /></li>
+                    </ui:fragment>
+                    <li>
+                        <h:form id="logoutForm">
+                            <h:commandLink action="#{loginController.cerrarSesion}"
+                                           styleClass="dropdown-item text-danger">
+                                <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i>Cerrar sesión
+                            </h:commandLink>
+                        </h:form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+</ui:composition>

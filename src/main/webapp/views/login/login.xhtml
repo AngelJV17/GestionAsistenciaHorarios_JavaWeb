@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      lang="es">
+
+    <f:metadata>
+        <f:viewAction action="#{loginController.verificarSesion}" />
+    </f:metadata>
+
+    <h:head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#0d47a1" />
+        <title>#{msg['login.titulo']} | #{msg['app.nombre']}</title>
+
+        <h:outputStylesheet library="css" name="bootstrap.min.css" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+              rel="stylesheet" />
+        <h:outputStylesheet library="css" name="style.css" />
+        <h:outputStylesheet library="css" name="login.css" />
+    </h:head>
+
+    <h:body styleClass="login-body">
+        <main class="login-shell">
+            <section class="login-card" aria-labelledby="loginTitle">
+                <aside class="login-visual" aria-label="Hospital Félix Mayorca Soto">
+                    <div class="login-visual__brand">
+                        <h1>#{msg['app.nombre']}</h1>
+                        <p>#{msg['app.sistema']}</p>
+                    </div>
+
+                    <div class="login-visual__image">
+                        <h:graphicImage library="images"
+                                        name="male-doctor.png"
+                                        alt="Médico del Hospital Félix Mayorca Soto" />
+                    </div>
+
+                    <p class="login-visual__note">
+                        <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                        <span>Acceso seguro para personal autorizado</span>
+                    </p>
+                </aside>
+
+                <div class="login-content">
+                    <header class="login-header text-center">
+                        <h:graphicImage library="images"
+                                        name="logo-HFMS.png"
+                                        alt="Hospital Félix Mayorca Soto"
+                                        styleClass="login-logo" />
+                        <h2 id="loginTitle">#{msg['login.titulo']}</h2>
+                        <p>Ingrese sus credenciales institucionales.</p>
+                    </header>
+
+                    <h:messages globalOnly="true"
+                                styleClass="alert alert-danger p-2 small text-center rounded-3 shadow-sm list-unstyled"
+                                errorClass="text-danger" />
+
+                    <h:form id="loginForm" styleClass="login-form" p:autocomplete="on">
+                        <div class="form-floating mb-3">
+                            <h:inputText id="username"
+                                         value="#{loginController.username}"
+                                         styleClass="form-control"
+                                         p:placeholder="Ingrese su usuario"
+                                         p:autocomplete="username"
+                                         required="true" />
+                            <h:outputLabel for="username" styleClass="d-flex align-items-center gap-2">
+                                <i class="fas fa-user text-primary" aria-hidden="true"></i>
+                                <span>#{msg['login.usuario']}</span>
+                            </h:outputLabel>
+                        </div>
+
+                        <div class="form-floating password-field mb-3">
+                            <h:inputSecret id="password"
+                                           value="#{loginController.password}"
+                                           styleClass="form-control"
+                                           p:placeholder="Ingrese su contraseña"
+                                           p:autocomplete="current-password"
+                                           required="true" />
+                            <h:outputLabel for="password" styleClass="d-flex align-items-center gap-2">
+                                <i class="fas fa-lock text-primary" aria-hidden="true"></i>
+                                <span>#{msg['login.password']}</span>
+                            </h:outputLabel>
+                            <button type="button"
+                                    id="togglePassword"
+                                    class="password-toggle"
+                                    aria-label="Mostrar contraseña">
+                                <i class="fas fa-eye" id="toggleIcon" aria-hidden="true"></i>
+                            </button>
+                        </div>
+
+                        <div class="form-options d-flex justify-content-between align-items-center mb-4">
+                            <label class="remember-me d-flex align-items-center gap-2" for="loginForm:remember">
+                                <h:selectBooleanCheckbox id="remember"
+                                                         value="#{loginController.rememberMe}"
+                                                         styleClass="form-check-input m-0" />
+                                <span class="small text-secondary">Recordar mi usuario</span>
+                            </label>
+                            <a href="#" class="forgot-password small">¿Olvidó su contraseña?</a>
+                        </div>
+
+                        <h:commandButton value="#{msg['login.boton']}"
+                                         action="#{loginController.autenticar}"
+                                         styleClass="btn btn-primary login-submit w-100 fw-semibold shadow-sm"
+                                         p:data-loading-text="Ingresando..." />
+                    </h:form>
+
+                    <footer class="login-footer">
+                        <p class="small text-muted">
+                            ¿Problemas para acceder?
+                            <a href="#">Contacte al administrador</a>
+                        </p>
+                    </footer>
+                </div>
+            </section>
+        </main>
+
+        <h:outputScript library="js" name="bootstrap.bundle.min.js" />
+        <h:outputScript library="js" name="login.js" />
+    </h:body>
+</html>

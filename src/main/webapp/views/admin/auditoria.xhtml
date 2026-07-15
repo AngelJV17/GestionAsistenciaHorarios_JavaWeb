@@ -1,0 +1,174 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Auditoría | Hospital Félix Mayorca Soto</ui:define>
+
+    <ui:define name="content">
+        <div class="module-page">
+            <section class="rounded-3 shadow p-4 mb-4 hero-banner">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-8">
+                        <h1 class="h2 fw-bold mb-2 text-white">
+                            <i class="fas fa-history me-2"></i>Auditoría del Sistema
+                        </h1>
+                        <p class="mb-0 text-white opacity-85">Consulte acciones, accesos y cambios sensibles realizados dentro del sistema.</p>
+                    </div>
+                    <div class="col-lg-4">
+                        <h:form id="actualizarAuditoriaForm">
+                            <div class="hero-actions justify-content-lg-end">
+                                <h:commandLink styleClass="hero-action-btn" action="#{auditoriaController.cargarRegistros}">
+                                    <i class="fas fa-sync-alt fs-4"></i>
+                                    <span class="hero-action-btn__text">
+                                        <span class="hero-action-btn__title">Actualizar</span>
+                                        <span class="hero-action-btn__subtitle">Recargar registros</span>
+                                    </span>
+                                </h:commandLink>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats-grid mb-4" aria-label="Resumen de auditoría">
+                <article class="stat-card stat-card-primary bg-white shadow-sm">
+                    <span class="stat-label">Registros</span>
+                    <span class="stat-value"><h:outputText value="#{auditoriaController.totalRegistros}" /></span>
+                    <span class="stat-trend trend-primary">En historial</span>
+                </article>
+                <article class="stat-card stat-card-success bg-white shadow-sm">
+                    <span class="stat-label">Ingresos</span>
+                    <span class="stat-value"><h:outputText value="#{auditoriaController.totalIngresos}" /></span>
+                    <span class="stat-trend trend-success">Eventos LOGIN</span>
+                </article>
+                <article class="stat-card stat-card-warning bg-white shadow-sm">
+                    <span class="stat-label">Actualizaciones</span>
+                    <span class="stat-value"><h:outputText value="#{auditoriaController.totalActualizaciones}" /></span>
+                    <span class="stat-trend trend-warning">Eventos UPDATE</span>
+                </article>
+                <article class="stat-card stat-card-danger bg-white shadow-sm">
+                    <span class="stat-label">Eliminaciones</span>
+                    <span class="stat-value"><h:outputText value="#{auditoriaController.totalEliminaciones}" /></span>
+                    <span class="stat-trend trend-danger">Eventos DELETE</span>
+                </article>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-filter"></i>
+                    <div>
+                        <h3>Filtros de búsqueda</h3>
+                        <small class="text-muted">Delimite la búsqueda por fecha, usuario o palabra clave.</small>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h:form id="filtrosAuditoriaForm">
+                        <div class="row g-3 align-items-start">
+                            <div class="col-md-6 col-lg-3">
+                                <div class="form-floating">
+                                    <h:inputText id="filtroDesde" styleClass="form-control" value="#{auditoriaController.filtroDesde}" p:type="date" p:placeholder="Desde">
+                                        <f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+                                    </h:inputText>
+                                    <h:outputLabel for="filtroDesde" value="Desde" />
+                                </div>
+                                <h:message for="filtroDesde" styleClass="text-danger small d-block mt-1" />
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                <div class="form-floating">
+                                    <h:inputText id="filtroHasta" styleClass="form-control" value="#{auditoriaController.filtroHasta}" p:type="date" p:placeholder="Hasta">
+                                        <f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+                                    </h:inputText>
+                                    <h:outputLabel for="filtroHasta" value="Hasta" />
+                                </div>
+                                <h:message for="filtroHasta" styleClass="text-danger small d-block mt-1" />
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                <div class="form-floating">
+                                    <h:inputText id="filtroUsuario" styleClass="form-control" value="#{auditoriaController.filtroUsuario}" p:placeholder="Usuario" />
+                                    <h:outputLabel for="filtroUsuario" value="Usuario" />
+                                </div>
+                                <h:message for="filtroUsuario" styleClass="text-danger small d-block mt-1" />
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                <div class="form-floating">
+                                    <h:inputText id="busquedaAuditoria" styleClass="form-control" value="#{auditoriaController.busqueda}" p:placeholder="Buscar..." />
+                                    <h:outputLabel for="busquedaAuditoria" value="Buscar" />
+                                </div>
+                                <h:message for="busquedaAuditoria" styleClass="text-danger small d-block mt-1" />
+                            </div>
+                            <div class="col-12">
+                                <div class="d-flex justify-content-end flex-wrap gap-2">
+                                    <h:commandButton value="Limpiar" styleClass="btn btn-secondary" action="#{auditoriaController.limpiar}" immediate="true" />
+                                    <h:commandButton value="Filtrar" styleClass="btn btn-primary" action="#{auditoriaController.filtrar}" />
+                                </div>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-clipboard-list"></i>
+                    <div>
+                        <h3>Registro de auditoría</h3>
+                        <small class="text-muted">Trazabilidad de eventos y cambios realizados en el sistema.</small>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <h:form id="tablaAuditoriaForm">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0 system-table">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th class="ps-4">Fecha y hora</th>
+                                        <th>Usuario</th>
+                                        <th>Acción</th>
+                                        <th>Recurso</th>
+                                        <th>IP</th>
+                                        <th>Descripción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <ui:repeat value="#{auditoriaController.registros}" var="registro">
+                                        <tr>
+                                            <td class="ps-4"><h:outputText value="#{registro.fechaRegistro}" /></td>
+                                            <td><strong><h:outputText value="#{registro.usuarioSistema}" /></strong></td>
+                                            <td><span class="badge bg-info text-dark"><h:outputText value="#{registro.accion}" /></span></td>
+                                            <td><strong><h:outputText value="#{registro.tablaAfectada}" /></strong></td>
+                                            <td><code><h:outputText value="#{registro.ip}" /></code></td>
+                                            <td class="small"><h:outputText value="#{registro.descripcion}" /></td>
+                                        </tr>
+                                    </ui:repeat>
+                                    <ui:fragment rendered="#{empty auditoriaController.registros}">
+                                        <tr>
+                                            <td colspan="6" class="text-center text-muted py-4">No hay registros de auditoría.</td>
+                                        </tr>
+                                    </ui:fragment>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 px-4 py-3 border-top">
+                            <small class="text-muted">
+                                Total: <strong><h:outputText value="#{auditoriaController.totalRegistros}" /></strong> registros
+                            </small>
+                            <nav aria-label="Paginación de auditoría">
+                                <ul class="pagination pagination-sm mb-0">
+                                    <ui:repeat value="#{auditoriaController.paginas}" var="pagina">
+                                        <li class="#{pagina eq auditoriaController.pagina ? 'page-item active' : 'page-item'}">
+                                            <h:commandLink styleClass="page-link" value="#{pagina}" action="#{auditoriaController.irPagina(pagina)}" />
+                                        </li>
+                                    </ui:repeat>
+                                </ul>
+                            </nav>
+                        </div>
+                    </h:form>
+                </div>
+            </section>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,434 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Gestión de Empleados | Hospital Félix Mayorca Soto</ui:define>
+
+    <ui:define name="content">
+        <div class="module-page">
+            <section class="rounded-3 shadow p-4 mb-4 hero-banner">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-8">
+                        <h1 class="h2 fw-bold mb-2 text-white">
+                            <i class="fas fa-id-card me-2"></i>Gestión de Empleados
+                        </h1>
+                        <p class="mb-0 text-white opacity-85">Administre datos laborales, sedes, áreas, cargos y especialidades del personal.</p>
+                    </div>
+                    <div class="col-lg-4">
+                        <h:form styleClass="hero-actions justify-content-lg-end">
+                            <h:commandLink styleClass="hero-action-btn" action="#{empleadosController.nuevoEmpleado}">
+                                <i class="fas fa-user-plus fs-4"></i>
+                                <span class="hero-action-btn__text">
+                                    <span class="hero-action-btn__title">Nuevo Empleado</span>
+                                    <span class="hero-action-btn__subtitle">Registrar personal</span>
+                                </span>
+                            </h:commandLink>
+                        </h:form>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats-grid mb-4" aria-label="Resumen de empleados">
+                <article class="stat-card stat-card-primary bg-white shadow-sm">
+                    <span class="stat-label">Empleados</span>
+                    <span class="stat-value"><h:outputText value="#{empleadosController.totalEmpleados}" /></span>
+                    <span class="stat-trend trend-primary">Registrados</span>
+                </article>
+                <article class="stat-card stat-card-success bg-white shadow-sm">
+                    <span class="stat-label">Activos</span>
+                    <span class="stat-value"><h:outputText value="#{empleadosController.totalActivos}" /></span>
+                    <span class="stat-trend trend-success">Disponibles</span>
+                </article>
+                <article class="stat-card stat-card-warning bg-white shadow-sm">
+                    <span class="stat-label">Inactivos</span>
+                    <span class="stat-value"><h:outputText value="#{empleadosController.totalEmpleados - empleadosController.totalActivos}" /></span>
+                    <span class="stat-trend trend-warning">Sin actividad</span>
+                </article>
+            </section>
+
+            <h:messages globalOnly="true" styleClass="jsf-alert-source d-none" />
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-filter"></i>
+                    <div>
+                        <h3>Filtros de búsqueda</h3>
+                        <small class="text-muted">Filtre el listado por cargo, estado o coincidencia directa.</small>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h:form id="filtrosEmpleadosForm">
+                        <div class="row g-3 align-items-end module-filter-row">
+                            <div class="col-lg-4 col-md-6">
+                                <div class="form-floating">
+                                    <h:selectOneMenu id="filtroCargo" styleClass="form-select" value="#{empleadosController.filtroCargoId}">
+                                        <f:selectItem itemValue="#{null}" itemLabel="Todos los cargos" noSelectionOption="true" />
+                                        <f:selectItems value="#{empleadosController.cargos}" var="cargo" itemValue="#{cargo.id}" itemLabel="#{cargo.nombre}" />
+                                    </h:selectOneMenu>
+                                    <h:outputLabel for="filtroCargo" value="Cargo" />
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="form-floating">
+                                    <h:selectOneMenu id="filtroEstado" styleClass="form-select" value="#{empleadosController.filtroEstado}">
+                                        <f:selectItem itemValue="todos" itemLabel="Todos los estados" />
+                                        <f:selectItem itemValue="activo" itemLabel="Activos" />
+                                        <f:selectItem itemValue="inactivo" itemLabel="Inactivos" />
+                                    </h:selectOneMenu>
+                                    <h:outputLabel for="filtroEstado" value="Estado" />
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-8">
+                                <div class="form-floating">
+                                    <h:inputText id="busquedaEmpleado"
+                                                 styleClass="form-control"
+                                                 value="#{empleadosController.busqueda}"
+                                                 p:placeholder="Buscar empleado..." />
+                                    <h:outputLabel for="busquedaEmpleado" value="Buscar empleado" />
+                                </div>
+                            </div>
+                            <div class="col-lg-1 col-md-4">
+                                <h:commandLink styleClass="btn btn-primary btn-filter-submit w-100"
+                                               style="height: 3.5rem;"
+                                               action="#{empleadosController.filtrar}"
+                                               title="Filtrar">
+                                    <i class="fas fa-filter"></i>
+                                </h:commandLink>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-users"></i>
+                    <div>
+                        <h3>Listado de empleados</h3>
+                        <small class="text-muted">Personal registrado para asistencia y programación de horarios.</small>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 system-table">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th class="ps-4">Código</th>
+                                    <th>Empleado</th>
+                                    <th>DNI</th>
+                                    <th>Sede</th>
+                                    <th>Área</th>
+                                    <th>Cargo</th>
+                                    <th>Estado</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ui:repeat value="#{empleadosController.empleados}" var="empleado">
+                                    <tr>
+                                        <td class="ps-4">
+                                            <strong><h:outputText value="#{empleado.codigoEmpleado}" /></strong>
+                                        </td>
+                                        <td>
+                                            <strong><h:outputText value="#{empleado.nombreCompleto}" /></strong><br />
+                                            <small class="text-muted">
+                                                <h:outputText value="#{empty empleado.correo ? 'Sin correo' : empleado.correo}" />
+                                            </small>
+                                        </td>
+                                        <td><h:outputText value="#{empleado.dni}" /></td>
+                                        <td><h:outputText value="#{empty empleado.sede ? 'Sin sede' : empleado.sede.nombre}" /></td>
+                                        <td><h:outputText value="#{empty empleado.area ? 'Sin área' : empleado.area.nombre}" /></td>
+                                        <td><h:outputText value="#{empty empleado.cargo ? 'Sin cargo' : empleado.cargo.nombre}" /></td>
+                                        <td>
+                                            <span class="#{empleado.activo ? 'badge approved' : 'badge rejected'}">
+                                                <h:outputText value="#{empleado.activo ? 'Activo' : 'Inactivo'}" />
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <h:form>
+                                                <div class="d-flex gap-1 justify-content-center">
+                                                    <h:commandLink styleClass="btn btn-sm btn-outline-primary"
+                                                                   title="Editar"
+                                                                   action="#{empleadosController.editarEmpleado(empleado.id)}">
+                                                        <i class="fas fa-pen-to-square"></i>
+                                                    </h:commandLink>
+                                                    <h:commandLink styleClass="btn btn-sm btn-outline-danger"
+                                                                   title="#{empleado.activo ? 'Desactivar' : 'Activar'}"
+                                                                   action="#{empleadosController.cambiarEstado(empleado.id)}">
+                                                        <i class="fas #{empleado.activo ? 'fa-ban' : 'fa-check'}"></i>
+                                                    </h:commandLink>
+                                                </div>
+                                            </h:form>
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+                                <ui:fragment rendered="#{empty empleadosController.empleados}">
+                                    <tr>
+                                        <td colspan="8" class="text-center text-muted py-4">No hay empleados registrados.</td>
+                                    </tr>
+                                </ui:fragment>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="modal fade" id="modalEmpleado" tabindex="-1" aria-labelledby="modalEmpleadoLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable mx-auto" style="max-width: 760px;">
+                <div class="modal-content mx-auto" style="width: min(100%, 720px); max-height: calc(100vh - 2rem); overflow: hidden;">
+                    <h:form id="formEmpleado">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="modalEmpleadoLabel">
+                                <i class="fas fa-id-card me-2"></i>
+                                <h:outputText value="#{empty empleadosController.empleadoSeleccionado.id ? 'Nuevo Empleado' : 'Editar Empleado'}" />
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+
+                        <div class="modal-body employee-form" style="max-height: calc(100vh - 12rem); overflow-y: auto;">
+                            <h:messages globalOnly="true" styleClass="jsf-alert-source d-none" />
+
+                            <div class="form-section-title">
+                                <i class="fas fa-user"></i>
+                                <span>Datos personales</span>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputText id="codigoEmpleado"
+                                                     styleClass="form-control"
+                                                     value="#{empleadosController.empleadoSeleccionado.codigoEmpleado}"
+                                                     readonly="true"
+                                                     p:placeholder="Código automático" />
+                                        <h:outputLabel for="codigoEmpleado" value="Código automático" />
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputText id="dni"
+                                                     styleClass="form-control"
+                                                     required="true"
+                                                     requiredMessage="Ingrese el DNI."
+                                                     validatorMessage="El DNI debe contener exactamente 8 números."
+                                                     value="#{empleadosController.empleadoSeleccionado.dni}"
+                                                     p:maxlength="8"
+                                                     p:placeholder="DNI">
+                                            <f:validateRegex pattern="^[0-9]{8}$" />
+                                        </h:inputText>
+                                        <h:outputLabel for="dni" value="DNI" />
+                                    </div>
+                                    <h:message for="dni" styleClass="field-error" />
+                                </div>
+
+                                <div class="col-lg-6 col-md-12">
+                                    <div class="form-floating">
+                                        <h:inputText id="nombres"
+                                                     styleClass="form-control"
+                                                     required="true"
+                                                     requiredMessage="Ingrese los nombres."
+                                                     validatorMessage="Los nombres deben tener entre 2 y 100 caracteres."
+                                                     value="#{empleadosController.empleadoSeleccionado.nombres}"
+                                                     p:placeholder="Nombres">
+                                            <f:validateLength minimum="2" maximum="100" />
+                                        </h:inputText>
+                                        <h:outputLabel for="nombres" value="Nombres" />
+                                    </div>
+                                    <h:message for="nombres" styleClass="field-error" />
+                                </div>
+
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputText id="apellidoPaterno"
+                                                     styleClass="form-control"
+                                                     required="true"
+                                                     requiredMessage="Ingrese el apellido paterno."
+                                                     validatorMessage="El apellido paterno debe tener entre 2 y 100 caracteres."
+                                                     value="#{empleadosController.empleadoSeleccionado.apellidoPaterno}"
+                                                     p:placeholder="Apellido paterno">
+                                            <f:validateLength minimum="2" maximum="100" />
+                                        </h:inputText>
+                                        <h:outputLabel for="apellidoPaterno" value="Apellido paterno" />
+                                    </div>
+                                    <h:message for="apellidoPaterno" styleClass="field-error" />
+                                </div>
+
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputText id="apellidoMaterno"
+                                                     styleClass="form-control"
+                                                     value="#{empleadosController.empleadoSeleccionado.apellidoMaterno}"
+                                                     p:placeholder="Apellido materno" />
+                                        <h:outputLabel for="apellidoMaterno" value="Apellido materno" />
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 col-md-12">
+                                    <div class="form-floating">
+                                        <h:inputText id="correo"
+                                                     styleClass="form-control"
+                                                     value="#{empleadosController.empleadoSeleccionado.correo}"
+                                                     p:type="email"
+                                                     p:placeholder="Correo" />
+                                        <h:outputLabel for="correo" value="Correo" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-section-title">
+                                <i class="fas fa-briefcase-medical"></i>
+                                <span>Datos laborales</span>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="form-floating">
+                                        <h:selectOneMenu id="sede"
+                                                         styleClass="form-select"
+                                                         required="true"
+                                                         requiredMessage="Seleccione sede."
+                                                         value="#{empleadosController.sedeId}">
+                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione sede" noSelectionOption="true" />
+                                            <f:selectItems value="#{empleadosController.sedes}" var="sede" itemValue="#{sede.id}" itemLabel="#{sede.nombre}" />
+                                        </h:selectOneMenu>
+                                        <h:outputLabel for="sede" value="Sede" />
+                                    </div>
+                                    <h:message for="sede" styleClass="field-error" />
+                                </div>
+
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="form-floating">
+                                        <h:selectOneMenu id="area"
+                                                         styleClass="form-select"
+                                                         required="true"
+                                                         requiredMessage="Seleccione área."
+                                                         value="#{empleadosController.areaId}">
+                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione área" noSelectionOption="true" />
+                                            <f:selectItems value="#{empleadosController.areas}" var="area" itemValue="#{area.id}" itemLabel="#{area.nombre}" />
+                                        </h:selectOneMenu>
+                                        <h:outputLabel for="area" value="Área" />
+                                    </div>
+                                    <h:message for="area" styleClass="field-error" />
+                                </div>
+
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="form-floating">
+                                        <h:selectOneMenu id="cargo"
+                                                         styleClass="form-select"
+                                                         required="true"
+                                                         requiredMessage="Seleccione cargo."
+                                                         value="#{empleadosController.cargoId}">
+                                            <f:selectItem itemValue="#{null}" itemLabel="Seleccione cargo" noSelectionOption="true" />
+                                            <f:selectItems value="#{empleadosController.cargos}" var="cargo" itemValue="#{cargo.id}" itemLabel="#{cargo.nombre}" />
+                                        </h:selectOneMenu>
+                                        <h:outputLabel for="cargo" value="Cargo" />
+                                    </div>
+                                    <h:message for="cargo" styleClass="field-error" />
+                                </div>
+
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="form-floating">
+                                        <h:selectOneMenu id="especialidad"
+                                                         styleClass="form-select"
+                                                         value="#{empleadosController.especialidadId}">
+                                            <f:selectItem itemValue="#{null}" itemLabel="Sin especialidad" noSelectionOption="true" />
+                                            <f:selectItems value="#{empleadosController.especialidades}" var="especialidad" itemValue="#{especialidad.id}" itemLabel="#{especialidad.nombre}" />
+                                        </h:selectOneMenu>
+                                        <h:outputLabel for="especialidad" value="Especialidad" />
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputText id="fechaIngreso"
+                                                     styleClass="form-control"
+                                                     required="true"
+                                                     requiredMessage="Ingrese fecha de ingreso."
+                                                     value="#{empleadosController.empleadoSeleccionado.fechaIngreso}"
+                                                     p:type="date"
+                                                     p:placeholder="Fecha de ingreso">
+                                            <f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+                                        </h:inputText>
+                                        <h:outputLabel for="fechaIngreso" value="Fecha de ingreso" />
+                                    </div>
+                                    <h:message for="fechaIngreso" styleClass="field-error" />
+                                </div>
+
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="form-floating">
+                                        <h:selectOneMenu id="activo"
+                                                         styleClass="form-select"
+                                                         value="#{empleadosController.empleadoSeleccionado.activo}">
+                                            <f:selectItem itemValue="true" itemLabel="Activo" />
+                                            <f:selectItem itemValue="false" itemLabel="Inactivo" />
+                                        </h:selectOneMenu>
+                                        <h:outputLabel for="activo" value="Estado" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-section-title">
+                                <i class="fas fa-key"></i>
+                                <span>Acceso al sistema</span>
+                            </div>
+
+                            <div class="row g-3 align-items-end">
+                                <div class="col-lg-5 col-md-6">
+                                    <div class="access-switch-panel">
+                                        <div class="form-check form-switch m-0">
+                                            <h:selectBooleanCheckbox id="crearAcceso"
+                                                                     styleClass="form-check-input"
+                                                                     value="#{empleadosController.crearAccesoSistema}" />
+                                            <h:outputLabel for="crearAcceso"
+                                                           styleClass="form-check-label"
+                                                           value="¿Tendrá acceso al sistema?" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-7 col-md-6">
+                                    <div class="form-floating">
+                                        <h:selectOneMenu id="rolAcceso"
+                                                         styleClass="form-select"
+                                                         value="#{empleadosController.codigoRolAcceso}">
+                                            <f:selectItem itemValue="" itemLabel="Seleccione rol" noSelectionOption="true" />
+                                            <f:selectItems value="#{empleadosController.rolesAcceso}" var="rol" itemValue="#{rol.codigo}" itemLabel="#{rol.nombre}" />
+                                        </h:selectOneMenu>
+                                        <h:outputLabel for="rolAcceso" value="Rol de acceso" />
+                                    </div>
+                                    <h:message for="rolAcceso" styleClass="field-error" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+
+                            <h:commandButton styleClass="btn btn-primary"
+                                             value="Guardar Empleado"
+                                             action="#{empleadosController.guardarEmpleado}" />
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+        <h:panelGroup rendered="#{empleadosController.mostrarModal}">
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const modalElement = document.getElementById('modalEmpleado');
+
+                    if (modalElement &amp;&amp; window.bootstrap) {
+                        new bootstrap.Modal(modalElement).show();
+                    }
+                });
+            </script>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>

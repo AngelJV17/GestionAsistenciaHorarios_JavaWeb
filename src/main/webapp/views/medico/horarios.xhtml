@@ -1,0 +1,208 @@
+﻿<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Horarios y Turnos | Hospital Félix Mayorca Soto</ui:define>
+    <ui:define name="content">
+        <div class="module-page">
+            <section class="rounded-3 shadow p-4 mb-4 hero-banner">
+                <div class="row align-items-center g-3">
+                    <div class="col-lg-8">
+                        <h1 class="h2 fw-bold mb-2 text-white">
+                            <i class="fas fa-calendar-alt me-2"></i>Horarios y Turnos
+                        </h1>
+                        <p class="mb-0 text-white opacity-85">
+                            Consulte su horario semanal y solicite cambios de turno.
+                        </p>
+                    </div>
+                    <div class="col-lg-4">
+                        <h:form>
+                            <div class="hero-actions justify-content-lg-end">
+                                <h:commandLink styleClass="hero-action-btn" action="#{medicoHorariosController.cargarHorarios}">
+                                    <i class="fas fa-sync-alt fs-4"></i>
+                                    <span class="hero-action-btn__text">
+                                        <span class="hero-action-btn__title">Actualizar</span>
+                                        <span class="hero-action-btn__subtitle">Recargar horario</span>
+                                    </span>
+                                </h:commandLink>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </section>
+
+            <h:panelGroup rendered="#{empty medicoHorariosController.empleado}">
+                <section class="card card-lift border-0 shadow bg-white">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-user-slash fa-3x text-secondary mb-3"></i>
+                        <h2 class="h4">No hay perfil médico vinculado</h2>
+                        <p class="text-muted mb-0">Solicite al administrador que vincule su usuario con un empleado activo.</p>
+                    </div>
+                </section>
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{not empty medicoHorariosController.empleado}">
+                <div class="schedule-dashboard">
+                    <section class="schedule-main-panel">
+                        <h:messages globalOnly="true" styleClass="jsf-alert-source d-none" />
+
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0 system-table schedule-table weekly-schedule">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th class="ps-4">Día</th>
+                                        <th>Turno</th>
+                                        <th>Hora de Inicio</th>
+                                        <th>Hora de Fin</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <ui:repeat value="#{medicoHorariosController.horarioSemanal}" var="fila">
+                                        <tr class="#{fila.clase}">
+                                            <td class="ps-4" data-label="Día">
+                                                <div class="schedule-day">
+                                                    <strong>#{fila.dia}</strong>
+                                                    <small>#{fila.fecha}</small>
+                                                </div>
+                                            </td>
+
+                                            <td data-label="Turno">
+                                                <strong>#{fila.turno}</strong>
+                                            </td>
+
+                                            <td data-label="Hora de Inicio">
+                                                <strong>#{fila.inicio}</strong>
+                                            </td>
+
+                                            <td data-label="Hora de Fin">
+                                                <strong>#{fila.fin}</strong>
+                                            </td>
+
+                                            <td data-label="Estado">
+                                                <span class="schedule-status #{fila.libre ? 'is-free' : (fila.estado eq 'Confirmado' ? 'is-confirmed' : (fila.estado eq 'Pendiente' ? 'is-pending' : (fila.estado eq 'Rechazado' ? 'is-rejected' : 'is-neutral')))}">
+                                                    #{fila.estado}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </ui:repeat>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="schedule-actions">
+                            <button class="btn btn-primary schedule-action-btn" type="button" id="toggleScheduleChange">
+                                <i class="fas fa-exchange-alt me-2"></i>Solicitar Cambio
+                            </button>
+                            <button class="btn btn-outline-primary schedule-action-btn" type="button" onclick="exportarHorarioPdf();">
+                                <i class="fas fa-print me-2"></i>Imprimir Horario
+                            </button>
+                        </div>
+
+                        <div class="schedule-change-panel" id="scheduleChangePanel">
+                            <h:form id="cambioTurnoForm">
+                                <div class="row g-3 align-items-end">
+                                    <div class="col-md-4">
+                                        <div class="form-floating">
+                                            <h:selectOneMenu id="turnoSolicitado" styleClass="form-select"
+                                                             value="#{medicoHorariosController.turnoSolicitadoId}"
+                                                             required="true">
+                                                <f:selectItem itemLabel="Seleccione un turno" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{medicoHorariosController.turnosActivos}" var="turno"
+                                                               itemLabel="#{turno.nombre} (#{medicoHorariosController.formatearHora(turno.horaInicio)} - #{medicoHorariosController.formatearHora(turno.horaFin)})"
+                                                               itemValue="#{turno.id}" />
+                                            </h:selectOneMenu>
+                                            <h:outputLabel for="turnoSolicitado" value="Turno solicitado" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-floating">
+                                            <h:inputText id="fechaCambio" styleClass="form-control"
+                                                         value="#{medicoHorariosController.fechaCambio}"
+                                                         p:type="date" p:placeholder="Fecha de cambio" required="true">
+                                                <f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+                                            </h:inputText>
+                                            <h:outputLabel for="fechaCambio" value="Fecha del cambio" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="form-floating">
+                                            <h:inputTextarea id="motivoCambio" styleClass="form-control"
+                                                             value="#{medicoHorariosController.motivoCambio}"
+                                                             p:placeholder="Motivo del cambio" required="true" />
+                                            <h:outputLabel for="motivoCambio" value="Motivo" />
+                                        </div>
+                                    </div>
+                                    <div class="col-12 d-flex justify-content-end gap-2">
+                                        <button class="btn btn-outline-primary" type="button" id="cancelScheduleChange">Cancelar</button>
+                                        <h:commandButton value="Enviar solicitud"
+                                                         styleClass="btn btn-primary"
+                                                         action="#{medicoHorariosController.solicitarCambioTurno}" />
+                                    </div>
+                                </div>
+                            </h:form>
+                        </div>
+                    </section>
+
+                    <aside class="schedule-side-panel" aria-label="Resumen de horarios">
+                        <section class="schedule-side-card schedule-today">
+                            <h4>Hoy</h4>
+                            <strong>Turno de #{medicoHorariosController.turnoHoyNombre}</strong>
+                            <span>#{medicoHorariosController.turnoHoyHorario}</span>
+                        </section>
+
+                        <section class="schedule-side-card">
+                            <h4>Resumen Mensual</h4>
+                            <div class="schedule-list">
+                                <div class="schedule-list-row">
+                                    <span>Turnos Mañana:</span>
+                                    <span>#{medicoHorariosController.turnosMananaMes}</span>
+                                </div>
+                                <div class="schedule-list-row">
+                                    <span>Turnos Tarde:</span>
+                                    <span>#{medicoHorariosController.turnosTardeMes}</span>
+                                </div>
+                                <div class="schedule-list-row">
+                                    <span>Turnos Noche:</span>
+                                    <span>#{medicoHorariosController.turnosNocheMes}</span>
+                                </div>
+                                <div class="schedule-list-row">
+                                    <span>Días libres:</span>
+                                    <span>#{medicoHorariosController.diasLibresMes}</span>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="schedule-side-card">
+                            <h4>Solicitudes Recientes</h4>
+                            <div class="schedule-list">
+                                <ui:repeat value="#{medicoHorariosController.solicitudesRecientes}" var="solicitud">
+                                    <div class="schedule-list-row">
+                                        <span>#{medicoHorariosController.resumirSolicitud(solicitud)}</span>
+                                        <span class="#{medicoHorariosController.obtenerClaseEstadoSolicitud(solicitud)}">
+                                            #{medicoHorariosController.obtenerEstadoSolicitud(solicitud)}
+                                        </span>
+                                    </div>
+                                </ui:repeat>
+
+                                <h:panelGroup rendered="#{not medicoHorariosController.tieneSolicitudesRecientes}">
+                                    <div class="schedule-list-row">
+                                        <span>Sin solicitudes registradas</span>
+                                    </div>
+                                </h:panelGroup>
+                            </div>
+                        </section>
+                    </aside>
+                </div>
+            </h:panelGroup>
+        </div>
+
+        <h:outputScript library="js" name="horarios.js" />
+    </ui:define>
+</ui:composition>
+

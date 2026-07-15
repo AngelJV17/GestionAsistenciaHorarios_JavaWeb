@@ -1,0 +1,1019 @@
+/* =========================================================
+   MÓDULO: ASISTENCIAS
+   Archivo: asistencias.css
+   Uso: cargar después de style.css.
+
+   Nota:
+   - Este archivo contiene solo estilos específicos del módulo.
+   - Los estilos generales como .btn, .container, header, footer,
+     modal base, formularios base y variables vienen desde style.css.
+========================================================= */
+
+/* ==============================
+   CABECERA DEL MÓDULO
+============================== */
+.attendance-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+}
+
+.attendance-header .welcome h2,
+.attendance-header h1,
+.attendance-header h2 {
+    margin-bottom: 4px;
+    color: var(--secondary-color);
+    font-size: clamp(1.35rem, 3vw, 1.75rem);
+    line-height: 1.2;
+}
+
+.attendance-header .welcome p,
+.attendance-header p {
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
+
+/* ==============================
+   FILTROS DEL MÓDULO
+============================== */
+.attendance-filters {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(180px, 1fr));
+    gap: 14px;
+    align-items: end;
+    margin-bottom: 18px;
+    padding: 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.filter-group {
+    min-width: 0;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--text-dark);
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.filter-select,
+.attendance-filters .form-control,
+.search-box input {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--text-dark);
+    font-size: 0.92rem;
+    transition: var(--transition);
+}
+
+.filter-select:focus,
+.attendance-filters .form-control:focus,
+.search-box input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.14);
+}
+
+.search-box {
+    position: relative;
+}
+
+.search-box input {
+    padding-right: 40px;
+}
+
+.search-icon {
+    position: absolute;
+    top: 50%;
+    right: 13px;
+    color: var(--text-light);
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* ==============================
+   RESUMEN / INDICADORES DE ASISTENCIA
+============================== */
+.attendance-stats,
+.attendance-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.stat-card,
+.summary-card {
+    padding: 18px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-top: 4px solid var(--primary-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    text-align: center;
+    transition: var(--transition);
+}
+
+.stat-card:hover,
+.summary-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 26px rgba(13, 71, 161, 0.14);
+}
+
+.stat-card h3,
+.summary-card h3 {
+    margin-bottom: 8px;
+    color: var(--text-light);
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.45px;
+    text-transform: uppercase;
+}
+
+.stat-value,
+.summary-value {
+    display: block;
+    margin: 4px 0;
+    color: var(--primary-color);
+    font-size: clamp(1.7rem, 4vw, 2.25rem);
+    font-weight: 800;
+    line-height: 1;
+}
+
+.summary-period,
+.stat-trend {
+    display: block;
+    margin-top: 6px;
+    color: var(--text-light);
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.trend-positive {
+    color: var(--success-color);
+}
+.trend-negative {
+    color: var(--error-color);
+}
+.trend-neutral {
+    color: var(--warning-color);
+}
+.trend-approve {
+    color: var(--primary-color);
+}
+
+/* ==============================
+   ACCIONES DEL MÓDULO
+============================== */
+.attendance-actions,
+.quick-actions-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.action-btn-sm,
+.today-btn {
+    min-height: 40px;
+    padding: 9px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--text-dark);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    transition: var(--transition);
+}
+
+.action-btn-sm:hover,
+.action-btn-sm:focus-visible {
+    border-color: var(--primary-color);
+    background: #eef7ff;
+    color: var(--primary-color);
+}
+
+.today-btn {
+    border-color: var(--accent-color);
+    background: var(--accent-color);
+    color: #fff;
+}
+
+.today-btn:hover,
+.today-btn:focus-visible {
+    background: #f57c00;
+}
+
+.export-options {
+    position: relative;
+}
+
+.export-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 160px;
+    display: none;
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+    z-index: 1200;
+}
+
+.export-menu.show {
+    display: block;
+}
+
+.export-option {
+    width: 100%;
+    padding: 10px 14px;
+    border: 0;
+    background: transparent;
+    color: var(--text-dark);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-align: left;
+    transition: var(--transition);
+}
+
+.export-option:hover,
+.export-option:focus-visible {
+    background: #eef7ff;
+    color: var(--primary-color);
+}
+
+/* ==============================
+   CONTROLES DE CALENDARIO
+============================== */
+.calendar-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+    padding: 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.month-navigation,
+.calendar-navigation,
+.view-options {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.nav-btn,
+.nav-btn-sm {
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: #fff;
+    cursor: pointer;
+    display: inline-grid;
+    place-items: center;
+    font-size: 0.95rem;
+    transition: var(--transition);
+}
+
+.nav-btn:hover,
+.nav-btn:focus-visible,
+.nav-btn-sm:hover,
+.nav-btn-sm:focus-visible {
+    background: var(--primary-dark);
+    transform: scale(1.04);
+}
+
+.current-month,
+.current-period {
+    min-width: 160px;
+    color: var(--secondary-color);
+    font-size: clamp(1.05rem, 2.6vw, 1.25rem);
+    font-weight: 800;
+    text-align: center;
+}
+
+.view-options .action-btn-sm.active {
+    border-color: var(--primary-color);
+    background: var(--primary-color);
+    color: #fff;
+}
+
+/* ==============================
+   TABLA / CALENDARIO DE ASISTENCIA
+============================== */
+.attendance-view {
+    margin-bottom: 22px;
+}
+
+.attendance-table-container,
+.attendance-list-container {
+    margin-bottom: 22px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.attendance-table,
+.attendance-list-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+}
+
+.attendance-table th,
+.attendance-list-table th {
+    padding: 13px 10px;
+    background: var(--secondary-color);
+    color: #fff;
+    font-size: 0.88rem;
+    font-weight: 800;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.attendance-list-table th {
+    text-align: left;
+}
+
+.attendance-table td,
+.attendance-list-table td {
+    border-bottom: 1px solid #e8f4fd;
+    color: var(--text-dark);
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
+.attendance-table td {
+    position: relative;
+    height: 72px;
+    padding: 12px 8px;
+    border-right: 1px solid #e8f4fd;
+    text-align: center;
+    vertical-align: top;
+}
+
+.attendance-table td:last-child {
+    border-right: 0;
+}
+
+.attendance-list-table td {
+    padding: 12px;
+    vertical-align: middle;
+}
+
+.attendance-list-table tbody tr:hover {
+    background: #f8fbff;
+}
+
+.day-number {
+    position: absolute;
+    top: 7px;
+    left: 7px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.85);
+    color: var(--text-dark);
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+.weekend {
+    background-color: #f8fafc;
+}
+
+.today {
+    border: 2px solid var(--primary-color) !important;
+    background-color: #eef7ff !important;
+}
+
+.today .day-number {
+    background: var(--primary-color);
+    color: #fff;
+}
+
+/* ==============================
+   ESTADOS DE ASISTENCIA
+============================== */
+.status-asistio {
+    background-color: #e8f5e9;
+    border-left: 4px solid var(--success-color);
+}
+.status-tardanza {
+    background-color: #fff8e1;
+    border-left: 4px solid var(--warning-color);
+}
+.status-falta {
+    background-color: #ffebee;
+    border-left: 4px solid var(--error-color);
+}
+.status-justificado {
+    background-color: #e3f2fd;
+    border-left: 4px solid var(--primary-color);
+}
+.status-vacaciones {
+    background-color: #f3e5f5;
+    border-left: 4px solid #9c27b0;
+}
+.status-vacio {
+    background-color: #f8fafc;
+}
+
+.status-badge {
+    min-width: 86px;
+    margin-top: 18px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    color: #fff;
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.35px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.badge-asistio {
+    background: var(--success-color);
+}
+.badge-tardanza {
+    background: var(--warning-color);
+}
+.badge-falta {
+    background: var(--error-color);
+}
+.badge-justificado {
+    background: var(--primary-color);
+}
+.badge-vacaciones {
+    background: #9c27b0;
+}
+.badge-empty {
+    background: #90a4ae;
+}
+
+/* ==============================
+   LEYENDA
+============================== */
+.attendance-legend {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+    padding: 14px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: #f8fbff;
+    color: var(--text-dark);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.legend-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+    flex-shrink: 0;
+}
+
+.legend-asistio {
+    background-color: var(--success-color);
+}
+.legend-tardanza {
+    background-color: var(--warning-color);
+}
+.legend-falta {
+    background-color: var(--error-color);
+}
+.legend-justificado {
+    background-color: var(--primary-color);
+}
+.legend-vacaciones {
+    background-color: #9c27b0;
+}
+
+/* ==============================
+   ESTADO VACÍO Y DETALLES
+============================== */
+.attendance-empty,
+.detail-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.attendance-empty {
+    padding: 34px 18px;
+    color: var(--text-light);
+    text-align: center;
+}
+
+.attendance-empty i {
+    margin-bottom: 12px;
+    color: #cbd5e1;
+    font-size: 2.6rem;
+}
+
+.attendance-empty h3 {
+    margin-bottom: 6px;
+    color: var(--text-dark);
+    font-size: 1.15rem;
+}
+
+.attendance-details {
+    margin-top: 24px;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+}
+
+.detail-card {
+    padding: 16px;
+}
+
+.detail-card h4 {
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--secondary-color);
+    font-size: 1.05rem;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.detail-item:last-child {
+    border-bottom: 0;
+}
+
+/* ==============================
+   MODAL Y FORMULARIOS ESPECÍFICOS
+   Mantiene solo extras del módulo.
+============================== */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.input-help,
+.char-counter,
+.file-info {
+    display: block;
+    margin-top: 5px;
+    color: var(--text-light);
+    font-size: 0.78rem;
+}
+
+.char-counter {
+    text-align: right;
+}
+
+.file-upload {
+    position: relative;
+    padding: 18px;
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    background: #fff;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.file-upload:hover,
+.file-upload:focus-within {
+    border-color: var(--primary-color);
+    background: #f8fbff;
+}
+
+.file-upload i {
+    margin-bottom: 8px;
+    color: var(--text-light);
+    font-size: 1.8rem;
+}
+
+.file-upload input[type="file"] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.file-list {
+    margin-top: 10px;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 6px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: #f8fbff;
+    font-size: 0.88rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"],
+.checkbox-label input[type="radio"] {
+    margin: 0;
+}
+
+.export-options-list {
+    margin-top: 14px;
+    padding: 14px;
+    background: #f8fbff;
+    border-radius: 8px;
+}
+
+/* =========================================================
+   TOAST / NOTIFICACIONES
+========================================================= */
+.save-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 2200;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 260px;
+    max-width: 360px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    color: #fff;
+    box-shadow: 0 12px 26px rgba(0,0,0,0.18);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(calc(100% + 24px));
+    transition:
+        opacity .28s ease,
+        transform .28s ease;
+
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
+.save-notification.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+}
+
+.save-notification.success {
+    background: #43a047;
+}
+
+.save-notification.error {
+    background: #e53935;
+}
+
+.save-notification.info {
+    background: #1e88e5;
+}
+
+.save-notification.warning {
+    background: #fb8c00;
+}
+
+.save-notification i {
+    font-size: 1rem;
+}
+
+.save-notification span {
+    flex: 1;
+    line-height: 1.4;
+}
+
+/* ==============================
+   BOTÓN CERRAR TOAST
+============================== */
+.save-notification .notification-close {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+    cursor: pointer;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0;
+    transition: .2s ease;
+}
+
+.save-notification .notification-close:hover {
+    background: rgba(255,255,255,0.30);
+    transform: scale(1.05);
+}
+
+.save-notification .notification-close i {
+    font-size: 0.82rem;
+    color: #fff;
+}
+@media (max-width: 480px) {
+    .save-notification {
+        top: 12px;
+        left: 12px;
+        right: 12px;
+        min-width: auto;
+        max-width: none;
+        transform: translateY(-120%);
+    }
+
+    .save-notification.show {
+        transform: translateY(0);
+    }
+}
+
+/* ==============================
+   RESPONSIVE DEL MÓDULO
+============================== */
+@media (max-width: 992px) {
+    .attendance-filters {
+        grid-template-columns: repeat(2, minmax(180px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .attendance-header,
+    .calendar-controls {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .attendance-actions,
+    .quick-actions-bar,
+    .view-options {
+        width: 100%;
+    }
+
+    .attendance-actions .btn,
+    .quick-actions-bar .action-btn-sm,
+    .view-options .action-btn-sm {
+        flex: 1 1 140px;
+    }
+
+    .attendance-filters,
+    .form-grid,
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .attendance-stats,
+    .attendance-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .month-navigation,
+    .calendar-navigation {
+        justify-content: center;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .attendance-stats,
+    .attendance-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .attendance-table-container,
+    .attendance-list-container {
+        width: calc(100% + 20px);
+        margin-inline: -10px;
+        border-radius: 10px;
+    }
+
+    .attendance-table,
+    .attendance-list-table {
+        min-width: 620px;
+        font-size: 0.82rem;
+    }
+
+    .attendance-table th,
+    .attendance-table td {
+        padding: 10px 6px;
+    }
+
+    .attendance-table td {
+        height: 68px;
+    }
+
+    .status-badge {
+        min-width: 72px;
+        margin-top: 15px;
+        padding: 5px 7px;
+        font-size: 0.66rem;
+    }
+
+    .current-month,
+    .current-period {
+        min-width: auto;
+        width: 100%;
+    }
+
+    .save-notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+        transform: translateY(-120%);
+    }
+
+    .save-notification.show {
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) and (orientation: landscape) {
+    .attendance-table-container,
+    .attendance-list-container {
+        max-height: 60vh;
+    }
+}
+
+/* ==============================
+   IMPRESIÓN
+============================== */
+@media print {
+    .attendance-actions,
+    .attendance-legend,
+    .save-notification,
+    .quick-actions-bar,
+    .attendance-filters,
+    .calendar-controls .attendance-actions {
+        display: none !important;
+    }
+
+    .attendance-table-container,
+    .attendance-list-container,
+    .summary-card,
+    .stat-card {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+    }
+
+    .attendance-table th,
+    .attendance-list-table th {
+        background: #f5f5f5 !important;
+        color: #000 !important;
+    }
+}
+
+
+/* =========================================================
+   TOAST / NOTIFICACIONES - VERSIÓN FINAL
+   Mantiene el estilo profesional del original, pero con mejor
+   control de tamaño, icono y responsive sin verse exagerado.
+========================================================= */
+.save-notification {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    left: auto !important;
+    width: auto !important;
+    min-width: 260px !important;
+    max-width: 360px !important;
+    min-height: 48px !important;
+    padding: 12px 18px !important;
+    border-radius: 10px !important;
+    color: #fff !important;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18) !important;
+    z-index: 2200 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 10px !important;
+    font-size: 0.92rem !important;
+    font-weight: 600 !important;
+    line-height: 1.35 !important;
+    text-align: left !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateX(calc(100% + 28px)) !important;
+    transition: transform 0.28s ease, opacity 0.28s ease !important;
+}
+
+.save-notification.show {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translateX(0) !important;
+}
+
+.save-notification i {
+    font-size: 1.05rem !important;
+    flex: 0 0 auto !important;
+}
+
+.save-notification span {
+    display: block !important;
+    min-width: 0 !important;
+}
+
+.save-notification.success {
+    background: #43a047 !important;
+}
+.save-notification.error {
+    background: #e53935 !important;
+}
+.save-notification.info {
+    background: #1e88e5 !important;
+}
+.save-notification.warning {
+    background: #fb8c00 !important;
+}
+
+/* El toast original no usaba botón visible; lo ocultamos para conservar ese look. */
+.notification-close {
+    display: none !important;
+}
+
+@media (max-width: 480px) {
+    .save-notification {
+        top: 12px !important;
+        right: 12px !important;
+        left: 12px !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        justify-content: flex-start !important;
+        transform: translateY(-120%) !important;
+    }
+
+    .save-notification.show {
+        transform: translateY(0) !important;
+    }
+}

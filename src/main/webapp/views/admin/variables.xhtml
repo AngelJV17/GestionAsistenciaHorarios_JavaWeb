@@ -1,0 +1,315 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Variables Globales | Hospital Félix Mayorca Soto</ui:define>
+
+    <ui:define name="content">
+        <div class="module-page">
+
+            <section class="rounded-3 shadow p-4 mb-4 hero-banner">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-8">
+                        <h1 class="h2 fw-bold mb-2 text-white">
+                            <i class="fas fa-database me-2"></i>Variables Globales
+                        </h1>
+                        <p class="mb-0 text-white opacity-85">
+                            Administre valores maestros del sistema, estados, tipos y categorías institucionales.
+                        </p>
+                    </div>
+                    <div class="col-lg-4">
+                        <h:form styleClass="hero-actions justify-content-lg-end">
+                            <h:commandLink styleClass="hero-action-btn" action="#{variablesController.nuevaVariable}">
+                                <i class="fas fa-plus-circle fs-4"></i>
+                                <span class="hero-action-btn__text">
+                                    <span class="hero-action-btn__title">Nueva Variable</span>
+                                    <span class="hero-action-btn__subtitle">Registrar valor</span>
+                                </span>
+                            </h:commandLink>
+                        </h:form>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats-grid mb-4" aria-label="Resumen de variables">
+                <article class="stat-card stat-card-primary bg-white shadow-sm">
+                    <span class="stat-label">Variables</span>
+                    <span class="stat-value">#{variablesController.totalVariables}</span>
+                    <span class="stat-trend trend-primary">Registradas</span>
+                </article>
+
+                <article class="stat-card stat-card-success bg-white shadow-sm">
+                    <span class="stat-label">Activas</span>
+                    <span class="stat-value">#{variablesController.totalActivas}</span>
+                    <span class="stat-trend trend-success">Disponibles</span>
+                </article>
+
+                <article class="stat-card stat-card-warning bg-white shadow-sm">
+                    <span class="stat-label">Categorías</span>
+                    <span class="stat-value">#{variablesController.totalCategorias}</span>
+                    <span class="stat-trend trend-warning">Agrupaciones</span>
+                </article>
+
+                <article class="stat-card stat-card-info bg-white shadow-sm">
+                    <span class="stat-label">Página actual</span>
+                    <span class="stat-value">#{variablesController.pagina}</span>
+                    <span class="stat-trend trend-info">Listado paginado</span>
+                </article>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-filter"></i>
+                    <div>
+                        <h3>Filtros de búsqueda</h3>
+                        <small class="text-muted">Filtre variables por categoría o coincidencia directa.</small>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <h:form id="filtrosVariablesForm">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-5">
+                                <div class="form-floating">
+                                    <h:selectOneMenu id="filtroCategoria" styleClass="form-select"
+                                                     value="#{variablesController.filtroCategoria}">
+                                        <f:selectItem itemValue="todas" itemLabel="Todas las categorías" />
+                                        <f:selectItem itemValue="SEXO" itemLabel="Sexo" />
+                                        <f:selectItem itemValue="ESTADO_USUARIO" itemLabel="Estado de Usuario" />
+                                        <f:selectItem itemValue="ESTADO_SOLICITUD" itemLabel="Estado de Solicitud" />
+                                        <f:selectItem itemValue="TIPO_MARCACION" itemLabel="Tipo de Marcación" />
+                                        <f:selectItem itemValue="TIPO_DOCUMENTO" itemLabel="Tipo de Documento" />
+                                        <f:selectItem itemValue="ESTADO_ASISTENCIA" itemLabel="Estado de Asistencia" />
+                                    </h:selectOneMenu>
+                                    <h:outputLabel for="filtroCategoria" value="Categoría" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-5">
+                                <div class="form-floating">
+                                    <h:inputText id="busquedaVariable"
+                                                 styleClass="form-control"
+                                                 value="#{variablesController.busqueda}"
+                                                 p:placeholder="Buscar variable..." />
+                                    <h:outputLabel for="busquedaVariable" value="Buscar variable" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <h:commandLink styleClass="btn btn-primary btn-filter-submit w-100 d-flex align-items-center justify-content-center gap-2"
+                                               action="#{variablesController.filtrar}"
+                                               >
+                                    <i class="fas fa-filter"></i>
+                                    <span>Filtrar</span>
+                                </h:commandLink>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-list"></i>
+                    <div>
+                        <h3>Listado de variables</h3>
+                        <small class="text-muted">Valores maestros utilizados por los módulos del sistema.</small>
+                    </div>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 system-table">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th class="ps-4">Categoría</th>
+                                    <th>Código</th>
+                                    <th>Nombre</th>
+                                    <th>Orden</th>
+                                    <th>Activo</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ui:repeat value="#{variablesController.variables}" var="variable">
+                                    <tr>
+                                        <td class="ps-4 fw-semibold text-primary">#{variable.categoria}</td>
+                                        <td class="fw-semibold">#{variable.codigo}</td>
+                                        <td>
+                                            <div class="fw-semibold">#{variable.nombre}</div>
+                                            <small class="text-muted">#{empty variable.descripcion ? 'Sin descripción' : variable.descripcion}</small>
+                                        </td>
+                                        <td>#{variable.ordenVisualizacion}</td>
+                                        <td>
+                                            <span class="#{variable.activo ? 'badge approved' : 'badge rejected'}">
+                                                #{variable.activo ? 'Sí' : 'No'}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <h:form>
+                                                <div class="d-flex gap-1 justify-content-center">
+                                                    <h:commandLink styleClass="btn btn-sm btn-outline-primary"
+                                                                   title="Editar"
+                                                                   action="#{variablesController.editarVariable(variable.id)}">
+                                                        <i class="fas fa-pen-to-square"></i>
+                                                    </h:commandLink>
+                                                    <h:commandLink styleClass="btn btn-sm btn-outline-danger"
+                                                                   title="#{variable.activo ? 'Desactivar' : 'Activar'}"
+                                                                   action="#{variablesController.cambiarEstado(variable.id)}">
+                                                        <i class="fas #{variable.activo ? 'fa-ban' : 'fa-check'}"></i>
+                                                    </h:commandLink>
+                                                </div>
+                                            </h:form>
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 px-4 py-3 border-top">
+                    <small class="text-muted">Página #{variablesController.pagina} de #{variablesController.totalPaginas}</small>
+                    <nav aria-label="Paginación de variables">
+                        <h:form>
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item #{variablesController.pagina le 1 ? 'disabled' : ''}">
+                                    <h:commandLink styleClass="page-link" action="#{variablesController.paginaAnterior}">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </h:commandLink>
+                                </li>
+                                <ui:repeat value="#{variablesController.paginas}" var="pagina">
+                                    <li class="page-item #{pagina eq variablesController.pagina ? 'active' : ''}">
+                                        <h:commandLink styleClass="page-link" action="#{variablesController.irPagina(pagina)}">
+                                            #{pagina}
+                                        </h:commandLink>
+                                    </li>
+                                </ui:repeat>
+                                <li class="page-item #{variablesController.pagina ge variablesController.totalPaginas ? 'disabled' : ''}">
+                                    <h:commandLink styleClass="page-link" action="#{variablesController.paginaSiguiente}">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </h:commandLink>
+                                </li>
+                            </ul>
+                        </h:form>
+                    </nav>
+                </div>
+            </section>
+
+        </div>
+
+        <div class="modal fade" id="modalVariable" tabindex="-1" aria-labelledby="modalVariableLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                    <h:form id="formVariable">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="modalVariableLabel">
+                                <i class="fas fa-database me-2"></i>
+                                #{empty variablesController.variableSeleccionada.id ? 'Nueva Variable' : 'Editar Variable'}
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputText id="categoria"
+                                                     styleClass="form-control"
+                                                     required="true"
+                                                     value="#{variablesController.variableSeleccionada.categoria}"
+                                                     p:placeholder="Categoría" />
+                                        <h:outputLabel for="categoria" value="Categoría" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputText id="codigo"
+                                                     styleClass="form-control"
+                                                     required="true"
+                                                     value="#{variablesController.variableSeleccionada.codigo}"
+                                                     readonly="true"
+                                                     p:placeholder="Código" />
+                                        <h:outputLabel for="codigo" value="Código" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputText id="nombre"
+                                                     styleClass="form-control"
+                                                     required="true"
+                                                     requiredMessage="Ingrese el nombre de la variable."
+                                                     value="#{variablesController.variableSeleccionada.nombre}"
+                                                     p:placeholder="Nombre">
+                                            <f:validateLength minimum="2" maximum="100" />
+                                        </h:inputText>
+                                        <h:outputLabel for="nombre" value="Nombre" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputText id="descripcion"
+                                                     styleClass="form-control"
+                                                     value="#{variablesController.variableSeleccionada.descripcion}"
+                                                     p:placeholder="Descripción" />
+                                        <h:outputLabel for="descripcion" value="Descripción" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputText id="orden"
+                                                     styleClass="form-control"
+                                                     value="#{variablesController.variableSeleccionada.ordenVisualizacion}"
+                                                     p:type="number"
+                                                     p:min="0"
+                                                     p:placeholder="Orden" />
+                                        <h:outputLabel for="orden" value="Orden de visualización" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:selectOneMenu id="activo"
+                                                         styleClass="form-select"
+                                                         value="#{variablesController.variableSeleccionada.activo}">
+                                            <f:selectItem itemValue="true" itemLabel="Activo" />
+                                            <f:selectItem itemValue="false" itemLabel="Inactivo" />
+                                        </h:selectOneMenu>
+                                        <h:outputLabel for="activo" value="Estado" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <h:commandButton styleClass="btn btn-primary"
+                                             value="Guardar Variable"
+                                             action="#{variablesController.guardarVariable}" />
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+        <h:panelGroup rendered="#{variablesController.mostrarModal}">
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const modalElement = document.getElementById('modalVariable');
+                    if (modalElement &amp;&amp; window.bootstrap) {
+                        new bootstrap.Modal(modalElement).show();
+                    }
+                });
+            </script>
+        </h:panelGroup>
+
+    </ui:define>
+</ui:composition>

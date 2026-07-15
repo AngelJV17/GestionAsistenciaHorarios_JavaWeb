@@ -1,0 +1,311 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Solicitudes | Hospital Félix Mayorca Soto</ui:define>
+
+    <ui:define name="content">
+        <div class="module-page">
+            <section class="rounded-3 shadow p-4 mb-4 hero-banner">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-8">
+                        <h1 class="h2 fw-bold mb-2 text-white">
+                            <i class="fas fa-clipboard-list me-2"></i>Solicitudes
+                        </h1>
+                        <p class="mb-0 text-white opacity-85">
+                            Registre permisos, licencias y trámites internos, y consulte el estado de atención.
+                        </p>
+                    </div>
+                    <div class="col-lg-4">
+                        <h:form>
+                            <div class="hero-actions justify-content-lg-end">
+                                <h:commandLink styleClass="hero-action-btn" action="#{medicoSolicitudesController.cargarSolicitudes}">
+                                    <i class="fas fa-sync-alt fs-4"></i>
+                                    <span class="hero-action-btn__text">
+                                        <span class="hero-action-btn__title">Actualizar</span>
+                                        <span class="hero-action-btn__subtitle">Recargar historial</span>
+                                    </span>
+                                </h:commandLink>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </section>
+
+            <h:panelGroup rendered="#{empty medicoSolicitudesController.empleado}">
+                <section class="card card-lift border-0 shadow bg-white">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-user-slash fa-3x text-secondary mb-3"></i>
+                        <h2 class="h4">No hay perfil médico vinculado</h2>
+                        <p class="text-muted mb-0">Solicite al administrador que vincule su usuario con un empleado activo.</p>
+                    </div>
+                </section>
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{not empty medicoSolicitudesController.empleado}">
+                <div class="medical-workspace">
+                    <div class="medical-main">
+                        <section class="card card-lift border-0 shadow bg-white mb-4">
+                            <div class="card__header px-4 pt-4">
+                                <i class="fas fa-file-circle-plus"></i>
+                                <div>
+                                    <h3>Nueva solicitud</h3>
+                                    <small class="text-muted">Indique el trámite, el periodo solicitado y el sustento correspondiente.</small>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <h:form id="solicitudMedicoForm" enctype="multipart/form-data">
+                                    <h:messages globalOnly="true" styleClass="jsf-alert-source d-none" />
+                                    <div class="document-upload-layout">
+                                        <section class="document-upload-group">
+                                            <div class="document-upload-group__title">
+                                                <i class="fas fa-list-check"></i>
+                                                <div>
+                                                    <h4>Tipo de trámite</h4>
+                                                    <small class="text-muted">Seleccione la categoría que mejor describe su solicitud.</small>
+                                                </div>
+                                            </div>
+                                            <div class="form-floating">
+                                                <h:selectOneMenu id="tipoSolicitud" styleClass="form-select"
+                                                                 value="#{medicoSolicitudesController.tipoSolicitudId}" required="true">
+                                                    <f:selectItem itemValue="#{null}" itemLabel="Seleccione tipo" noSelectionOption="true" />
+                                                    <f:selectItems value="#{medicoSolicitudesController.tiposSolicitud}"
+                                                                   var="tipo"
+                                                                   itemValue="#{tipo.id}"
+                                                                   itemLabel="#{tipo.nombre}" />
+                                                </h:selectOneMenu>
+                                                <h:outputLabel for="tipoSolicitud" value="Tipo de solicitud" />
+                                            </div>
+                                        </section>
+
+                                        <section class="document-upload-group">
+                                            <div class="document-upload-group__title">
+                                                <i class="fas fa-calendar-days"></i>
+                                                <div>
+                                                    <h4>Periodo solicitado</h4>
+                                                    <small class="text-muted">Para un solo día use solo “desde”. Complete “hasta” cuando sea un rango.</small>
+                                                </div>
+                                            </div>
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <div class="form-floating">
+                                                        <h:inputText id="fechaInicio" styleClass="form-control"
+                                                                     value="#{medicoSolicitudesController.fechaInicio}"
+                                                                     p:type="date" p:placeholder="Fecha inicio" required="true">
+                                                            <f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+                                                        </h:inputText>
+                                                        <h:outputLabel for="fechaInicio" value="Desde cuándo aplica" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-floating">
+                                                        <h:inputText id="fechaFin" styleClass="form-control"
+                                                                     value="#{medicoSolicitudesController.fechaFin}"
+                                                                     p:type="date" p:placeholder="Fecha fin">
+                                                            <f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+                                                        </h:inputText>
+                                                        <h:outputLabel for="fechaFin" value="Hasta cuándo aplica" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </section>
+
+                                        <section class="document-upload-group">
+                                            <div class="document-upload-group__title">
+                                                <i class="fas fa-pen-to-square"></i>
+                                                <div>
+                                                    <h4>Sustento de la solicitud</h4>
+                                                    <small class="text-muted">Explique el motivo para que administración pueda evaluarlo sin pedir más información.</small>
+                                                </div>
+                                            </div>
+                                            <div class="form-floating">
+                                                <h:inputTextarea id="motivo" styleClass="form-control document-description"
+                                                                 value="#{medicoSolicitudesController.motivo}"
+                                                                 required="true"
+                                                                 p:placeholder="Explique el motivo de la solicitud" />
+                                                <h:outputLabel for="motivo" value="Motivo" />
+                                            </div>
+                                        </section>
+
+                                        <section class="document-upload-group">
+                                            <div class="document-upload-group__title">
+                                                <i class="fas fa-paperclip"></i>
+                                                <div>
+                                                    <h4>Archivo de respaldo</h4>
+                                                    <small class="text-muted">Opcional. Adjunte una constancia, certificado o evidencia si corresponde.</small>
+                                                </div>
+                                            </div>
+                                            <label class="document-file-label" for="solicitudMedicoForm:archivo">
+                                                <i class="fas fa-file-arrow-up"></i>
+                                                <span>Adjunto opcional</span>
+                                            </label>
+                                            <h:inputFile id="archivo" styleClass="form-control" value="#{medicoSolicitudesController.archivo}" />
+                                            <small class="text-muted d-block mt-2">Tamaño máximo: 10 MB.</small>
+                                        </section>
+                                    </div>
+                                    <div class="document-upload-actions">
+                                        <h:commandButton value="Enviar solicitud"
+                                                         styleClass="btn btn-primary"
+                                                         action="#{medicoSolicitudesController.registrarSolicitud}" />
+                                    </div>
+                                </h:form>
+                            </div>
+                        </section>
+
+                        <section class="card card-lift border-0 shadow bg-white mb-4">
+                            <div class="card__header px-4 pt-4">
+                                <i class="fas fa-clock-rotate-left"></i>
+                                <div>
+                                    <h3>Historial de solicitudes</h3>
+                                    <small class="text-muted">Seguimiento de solicitudes enviadas y respuesta administrativa.</small>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <h:form id="filtroSolicitudesMedicoForm" styleClass="mb-3">
+                                    <div class="row g-3 align-items-end">
+                                        <div class="col-md-8">
+                                            <div class="form-floating">
+                                                <h:inputText id="busqueda" styleClass="form-control"
+                                                             value="#{medicoSolicitudesController.busqueda}"
+                                                             p:placeholder="Buscar..." />
+                                                <h:outputLabel for="busqueda" value="Buscar por tipo, estado o motivo" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <h:commandLink styleClass="btn btn-primary w-100" action="#{medicoSolicitudesController.filtrar}" title="Buscar">
+                                                <i class="fas fa-search"></i>
+                                            </h:commandLink>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <h:commandLink styleClass="btn btn-outline-primary w-100" action="#{medicoSolicitudesController.limpiarFiltros}" title="Limpiar filtros">
+                                                <i class="fas fa-eraser"></i>
+                                            </h:commandLink>
+                                        </div>
+                                    </div>
+                                </h:form>
+
+                                <h:form id="historialSolicitudesMedicoForm">
+                                    <div class="request-history-list">
+                                        <ui:repeat value="#{medicoSolicitudesController.solicitudes}" var="solicitud">
+                                            <article class="request-history-item">
+                                                <div class="request-history-main">
+                                                    <div class="request-history-title">
+                                                        <i class="fas fa-file-medical-alt"></i>
+                                                        <span>#{solicitud.tipoSolicitud.nombre}</span>
+                                                    </div>
+                                                    <p class="request-history-detail">#{medicoSolicitudesController.obtenerMotivoVisible(solicitud)}</p>
+                                                    <div class="request-history-support">
+                                                        <span class="request-support-pill">
+                                                            <i class="fas fa-calendar-day"></i>
+                                                            Desde #{solicitud.fechaInicio}
+                                                        </span>
+                                                        <span class="request-support-pill">
+                                                            <i class="fas fa-calendar-check"></i>
+                                                            Hasta #{empty solicitud.fechaFin ? 'No aplica' : solicitud.fechaFin}
+                                                        </span>
+                                                        <h:panelGroup rendered="#{not empty solicitud.nombreArchivo}">
+                                                            <h:commandLink styleClass="request-support-pill text-decoration-none"
+                                                                           title="Abrir adjunto"
+                                                                           onclick="return abrirEnNuevaPestana(this);"
+                                                                           action="#{medicoSolicitudesController.abrirAdjunto(solicitud)}">
+                                                                <i class="fas fa-paperclip"></i>
+                                                                <strong>#{solicitud.nombreArchivo}</strong>
+                                                                <i class="fas fa-arrow-up-right-from-square"></i>
+                                                            </h:commandLink>
+                                                        </h:panelGroup>
+                                                    </div>
+                                                </div>
+                                                <div class="request-history-meta">
+                                                    <span>#{solicitud.fechaRegistro}</span>
+                                                </div>
+                                                <span class="request-history-state #{medicoSolicitudesController.obtenerClaseEstado(solicitud)}">
+                                                    #{solicitud.estado.nombre}
+                                                </span>
+                                            </article>
+                                        </ui:repeat>
+                                        <h:panelGroup rendered="#{empty medicoSolicitudesController.solicitudes}">
+                                            <div class="empty-state">
+                                                <i class="fas fa-clipboard-list"></i>
+                                                <h3>No hay solicitudes registradas</h3>
+                                                <p>No se encontraron solicitudes para los filtros seleccionados.</p>
+                                            </div>
+                                        </h:panelGroup>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 pt-3">
+                                        <small class="text-muted">Página #{medicoSolicitudesController.pagina} de #{medicoSolicitudesController.totalPaginas}</small>
+                                        <nav aria-label="Paginación de solicitudes">
+                                            <ul class="pagination pagination-sm mb-0">
+                                                <ui:repeat value="#{medicoSolicitudesController.paginas}" var="pagina">
+                                                    <li class="page-item #{pagina eq medicoSolicitudesController.pagina ? 'active' : ''}">
+                                                        <h:commandLink styleClass="page-link" value="#{pagina}" action="#{medicoSolicitudesController.irPagina(pagina)}" />
+                                                    </li>
+                                                </ui:repeat>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </h:form>
+                            </div>
+                        </section>
+                    </div>
+
+                    <aside class="medical-sidebar">
+                        <section class="card card-lift border-0 shadow bg-white">
+                            <div class="card__header px-4 pt-4">
+                                <i class="fas fa-chart-pie"></i>
+                                <div>
+                                    <h3>Resumen</h3>
+                                    <small class="text-muted">Estado actual de sus trámites.</small>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="sidebar-metric"><span>Total enviadas</span><strong>#{medicoSolicitudesController.totalHistorico}</strong></div>
+                                <div class="sidebar-metric"><span>Pendientes</span><strong class="text-warning">#{medicoSolicitudesController.totalPendientes}</strong></div>
+                                <div class="sidebar-metric"><span>Aprobadas</span><strong class="text-success">#{medicoSolicitudesController.totalAprobadas}</strong></div>
+                                <div class="sidebar-metric"><span>Rechazadas</span><strong class="text-danger">#{medicoSolicitudesController.totalRechazadas}</strong></div>
+                            </div>
+                        </section>
+
+                        <section class="card card-lift border-0 shadow bg-white">
+                            <div class="card__header px-4 pt-4">
+                                <i class="fas fa-circle-info"></i>
+                                <div>
+                                    <h3>Antes de enviar</h3>
+                                    <small class="text-muted">Recomendaciones para evitar observaciones.</small>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <ul class="hint-list">
+                                    <li><i class="fas fa-check"></i><span>Use un motivo claro y específico.</span></li>
+                                    <li><i class="fas fa-calendar-days"></i><span>Complete fecha fin solo si el trámite cubre varios días.</span></li>
+                                    <li><i class="fas fa-paperclip"></i><span>Adjunte evidencia cuando exista constancia o certificado.</span></li>
+                                </ul>
+                            </div>
+                        </section>
+
+                        <section class="card card-lift border-0 shadow bg-white">
+                            <div class="card__header px-4 pt-4">
+                                <i class="fas fa-list-check"></i>
+                                <div>
+                                    <h3>Tipos disponibles</h3>
+                                    <small class="text-muted">Catálogo activo para solicitudes.</small>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <ul class="hint-list">
+                                    <ui:repeat value="#{medicoSolicitudesController.tiposSolicitud}" var="tipo">
+                                        <li><i class="fas fa-file-medical"></i><span>#{tipo.nombre}</span></li>
+                                    </ui:repeat>
+                                </ul>
+                            </div>
+                        </section>
+                    </aside>
+                </div>
+            </h:panelGroup>
+        </div>
+    </ui:define>
+</ui:composition>

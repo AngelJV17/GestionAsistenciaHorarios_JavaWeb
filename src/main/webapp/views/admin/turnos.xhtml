@@ -1,0 +1,331 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Gestión de Turnos | Hospital Félix Mayorca Soto</ui:define>
+
+    <ui:define name="content">
+        <div class="module-page">
+
+            <section class="rounded-3 shadow p-4 mb-4 hero-banner">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-8">
+                        <h1 class="h2 fw-bold mb-2 text-white">
+                            <i class="fas fa-clock me-2"></i>Gestión de Turnos
+                        </h1>
+                        <p class="mb-0 text-white opacity-85">
+                            Administre turnos base, tolerancias y jornadas activas del personal.
+                        </p>
+                    </div>
+                    <div class="col-lg-4">
+                        <h:form styleClass="hero-actions justify-content-lg-end">
+                            <h:commandLink styleClass="hero-action-btn" action="#{turnosController.nuevoTurno}">
+                                <i class="fas fa-calendar-plus fs-4"></i>
+                                <span class="hero-action-btn__text">
+                                    <span class="hero-action-btn__title">Nuevo Turno</span>
+                                    <span class="hero-action-btn__subtitle">Registrar horario</span>
+                                </span>
+                            </h:commandLink>
+                        </h:form>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats-grid mb-4" aria-label="Resumen de turnos">
+                <article class="stat-card stat-card-primary bg-white shadow-sm">
+                    <span class="stat-label">Turnos base</span>
+                    <span class="stat-value">#{turnosController.totalTurnos}</span>
+                    <span class="stat-trend trend-primary">Registrados</span>
+                </article>
+
+                <article class="stat-card stat-card-success bg-white shadow-sm">
+                    <span class="stat-label">Activos</span>
+                    <span class="stat-value">#{turnosController.totalActivos}</span>
+                    <span class="stat-trend trend-success">Disponibles</span>
+                </article>
+
+                <article class="stat-card stat-card-warning bg-white shadow-sm">
+                    <span class="stat-label">Inactivos</span>
+                    <span class="stat-value">#{turnosController.totalTurnos - turnosController.totalActivos}</span>
+                    <span class="stat-trend trend-warning">No asignables</span>
+                </article>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-filter"></i>
+                    <div>
+                        <h3>Filtros de búsqueda</h3>
+                        <small class="text-muted">Filtre turnos por estado o coincidencia directa.</small>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <h:form id="filtrosTurnosForm">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-5">
+                                <div class="form-floating">
+                                    <h:selectOneMenu id="filtroEstado" styleClass="form-select"
+                                                     value="#{turnosController.filtroEstado}">
+                                        <f:selectItem itemValue="todos" itemLabel="Todos" />
+                                        <f:selectItem itemValue="activo" itemLabel="Activo" />
+                                        <f:selectItem itemValue="inactivo" itemLabel="Inactivo" />
+                                    </h:selectOneMenu>
+                                    <h:outputLabel for="filtroEstado" value="Estado" />
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-floating">
+                                    <h:inputText id="busquedaTurno"
+                                                 styleClass="form-control"
+                                                 value="#{turnosController.busqueda}"
+                                                 p:placeholder="Buscar turno..." />
+                                    <h:outputLabel for="busquedaTurno" value="Buscar turno" />
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <h:commandLink styleClass="btn btn-primary btn-filter-submit w-100 d-flex align-items-center justify-content-center gap-2"
+                                               action="#{turnosController.filtrar}"
+                                               >
+                                    <i class="fas fa-filter"></i>
+                                    <span>Filtrar</span>
+                                </h:commandLink>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-list-alt"></i>
+                    <div>
+                        <h3>Turnos Base</h3>
+                        <small class="text-muted">Catálogo de jornadas disponibles para programación.</small>
+                    </div>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 system-table">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th class="ps-4">Código</th>
+                                    <th>Nombre</th>
+                                    <th>Horario</th>
+                                    <th>Tolerancia</th>
+                                    <th>Jornada</th>
+                                    <th>Estado</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ui:repeat value="#{turnosController.turnos}" var="turno">
+                                    <tr>
+                                        <td class="ps-4 fw-semibold">#{turno.codigo}</td>
+                                        <td>
+                                            <div class="fw-semibold">#{turno.nombre}</div>
+                                            <small class="text-muted">Turno institucional</small>
+                                        </td>
+                                        <td>
+                                            <span class="fw-semibold">#{turno.horaInicio}</span>
+                                            <span class="text-muted mx-1">a</span>
+                                            <span class="fw-semibold">#{turno.horaFin}</span>
+                                        </td>
+                                        <td>#{turno.toleranciaMinutos} min</td>
+                                        <td>#{turno.horasJornada} hrs</td>
+                                        <td>
+                                            <span class="#{turno.activo ? 'badge approved' : 'badge rejected'}">
+                                                #{turno.activo ? 'Activo' : 'Inactivo'}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <h:form>
+                                                <div class="d-flex gap-1 justify-content-center">
+                                                    <h:commandLink styleClass="btn btn-sm btn-outline-primary"
+                                                                   title="Editar"
+                                                                   action="#{turnosController.editarTurno(turno.id)}">
+                                                        <i class="fas fa-pen-to-square"></i>
+                                                    </h:commandLink>
+                                                    <h:commandLink styleClass="btn btn-sm btn-outline-danger"
+                                                                   title="#{turno.activo ? 'Desactivar' : 'Activar'}"
+                                                                   action="#{turnosController.cambiarEstado(turno.id)}">
+                                                        <i class="fas #{turno.activo ? 'fa-ban' : 'fa-check'}"></i>
+                                                    </h:commandLink>
+                                                </div>
+                                            </h:form>
+                                        </td>
+                                    </tr>
+                                </ui:repeat>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 px-4 py-3 border-top">
+                    <small class="text-muted">Página #{turnosController.pagina} de #{turnosController.totalPaginas}</small>
+                    <nav aria-label="Paginación de turnos">
+                        <h:form>
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item #{turnosController.pagina le 1 ? 'disabled' : ''}">
+                                    <h:commandLink styleClass="page-link" action="#{turnosController.paginaAnterior}">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </h:commandLink>
+                                </li>
+                                <ui:repeat value="#{turnosController.paginas}" var="pagina">
+                                    <li class="page-item #{pagina eq turnosController.pagina ? 'active' : ''}">
+                                        <h:commandLink styleClass="page-link" action="#{turnosController.irPagina(pagina)}">
+                                            #{pagina}
+                                        </h:commandLink>
+                                    </li>
+                                </ui:repeat>
+                                <li class="page-item #{turnosController.pagina ge turnosController.totalPaginas ? 'disabled' : ''}">
+                                    <h:commandLink styleClass="page-link" action="#{turnosController.paginaSiguiente}">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </h:commandLink>
+                                </li>
+                            </ul>
+                        </h:form>
+                    </nav>
+                </div>
+            </section>
+
+        </div>
+
+        <div class="modal fade" id="modalTurno" tabindex="-1" aria-labelledby="modalTurnoLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                    <h:form id="formTurno">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="modalTurnoLabel">
+                                <i class="fas fa-clock me-2"></i>
+                                #{empty turnosController.turnoSeleccionado.id ? 'Nuevo Turno' : 'Editar Turno'}
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputText id="codigoTurno"
+                                                     styleClass="form-control"
+                                                     required="true"
+                                                     value="#{turnosController.turnoSeleccionado.codigo}"
+                                                     readonly="true"
+                                                     p:placeholder="Código" />
+                                        <h:outputLabel for="codigoTurno" value="Código" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputText id="nombreTurno"
+                                                     styleClass="form-control"
+                                                     required="true"
+                                                     requiredMessage="Ingrese el nombre del turno."
+                                                     value="#{turnosController.turnoSeleccionado.nombre}"
+                                                     p:placeholder="Nombre">
+                                            <f:validateLength minimum="3" maximum="100" />
+                                        </h:inputText>
+                                        <h:outputLabel for="nombreTurno" value="Nombre del turno" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputText id="horaInicio"
+                                                     styleClass="form-control"
+                                                     required="true"
+                                                     requiredMessage="Ingrese la hora de inicio."
+                                                     value="#{turnosController.turnoSeleccionado.horaInicio}"
+                                                     p:type="time"
+                                                     p:placeholder="Inicio" />
+                                        <h:outputLabel for="horaInicio" value="Hora de inicio" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputText id="horaFin"
+                                                     styleClass="form-control"
+                                                     required="true"
+                                                     requiredMessage="Ingrese la hora de fin."
+                                                     value="#{turnosController.turnoSeleccionado.horaFin}"
+                                                     p:type="time"
+                                                     p:placeholder="Fin" />
+                                        <h:outputLabel for="horaFin" value="Hora de fin" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputText id="tolerancia"
+                                                     styleClass="form-control"
+                                                     value="#{turnosController.turnoSeleccionado.toleranciaMinutos}"
+                                                     p:type="number"
+                                                     p:min="0"
+                                                     p:max="120"
+                                                     p:placeholder="Minutos" />
+                                        <h:outputLabel for="tolerancia" value="Tolerancia (minutos)" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:inputText id="horasJornada"
+                                                     styleClass="form-control"
+                                                     required="true"
+                                                     requiredMessage="Ingrese las horas de jornada."
+                                                     value="#{turnosController.turnoSeleccionado.horasJornada}"
+                                                     p:type="number"
+                                                     p:min="1"
+                                                     p:max="24"
+                                                     p:step="0.01"
+                                                     p:placeholder="Horas" />
+                                        <h:outputLabel for="horasJornada" value="Horas de jornada" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <h:selectOneMenu id="activo"
+                                                         styleClass="form-select"
+                                                         value="#{turnosController.turnoSeleccionado.activo}">
+                                            <f:selectItem itemValue="true" itemLabel="Activo" />
+                                            <f:selectItem itemValue="false" itemLabel="Inactivo" />
+                                        </h:selectOneMenu>
+                                        <h:outputLabel for="activo" value="Estado" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <h:commandButton styleClass="btn btn-primary"
+                                             value="Guardar Turno"
+                                             action="#{turnosController.guardarTurno}" />
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+        <h:panelGroup rendered="#{turnosController.mostrarModal}">
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const modalElement = document.getElementById('modalTurno');
+                    if (modalElement &amp;&amp; window.bootstrap) {
+                        new bootstrap.Modal(modalElement).show();
+                    }
+                });
+            </script>
+        </h:panelGroup>
+
+    </ui:define>
+</ui:composition>

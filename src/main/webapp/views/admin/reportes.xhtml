@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Reportes | Hospital Félix Mayorca Soto</ui:define>
+
+    <ui:define name="content">
+        <div class="module-page">
+            <section class="rounded-3 shadow p-4 mb-4 hero-banner">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-12">
+                        <h1 class="h2 fw-bold mb-2 text-white">
+                            <i class="fas fa-chart-bar me-2"></i>Reportes
+                        </h1>
+                        <p class="mb-0 text-white opacity-85">Visualice indicadores de asistencia, horas trabajadas y resúmenes mensuales.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats-grid mb-4" aria-label="Resumen de reportes">
+                <article class="stat-card stat-card-primary bg-white shadow-sm">
+                    <span class="stat-label">Total empleados</span>
+                    <span class="stat-value">#{reportesController.totalEmpleados}</span>
+                    <span class="stat-trend trend-primary">Activos</span>
+                </article>
+                <article class="stat-card stat-card-success bg-white shadow-sm">
+                    <span class="stat-label">% Asistencia mensual</span>
+                    <span class="stat-value">#{reportesController.porcentajeAsistencia}%</span>
+                    <span class="stat-trend trend-success">Según filtros</span>
+                </article>
+                <article class="stat-card stat-card-warning bg-white shadow-sm">
+                    <span class="stat-label">Horas extras totales</span>
+                    <span class="stat-value">#{reportesController.totalHorasExtrasTexto}</span>
+                    <span class="stat-trend trend-warning">Mes seleccionado</span>
+                </article>
+                <article class="stat-card stat-card-danger bg-white shadow-sm">
+                    <span class="stat-label">Tardanzas totales</span>
+                    <span class="stat-value">#{reportesController.totalTardanzas}</span>
+                    <span class="stat-trend trend-danger">Mes seleccionado</span>
+                </article>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-filter"></i>
+                    <div>
+                        <h3>Filtros de reporte</h3>
+                        <small class="text-muted">Genere indicadores por mes y área institucional.</small>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h:form id="filtrosReportesForm">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <h:selectOneMenu id="filtroMes" styleClass="form-select" value="#{reportesController.filtroMes}">
+                                        <f:selectItem itemValue="1" itemLabel="Enero" />
+                                        <f:selectItem itemValue="2" itemLabel="Febrero" />
+                                        <f:selectItem itemValue="3" itemLabel="Marzo" />
+                                        <f:selectItem itemValue="4" itemLabel="Abril" />
+                                        <f:selectItem itemValue="5" itemLabel="Mayo" />
+                                        <f:selectItem itemValue="6" itemLabel="Junio" />
+                                        <f:selectItem itemValue="7" itemLabel="Julio" />
+                                        <f:selectItem itemValue="8" itemLabel="Agosto" />
+                                        <f:selectItem itemValue="9" itemLabel="Septiembre" />
+                                        <f:selectItem itemValue="10" itemLabel="Octubre" />
+                                        <f:selectItem itemValue="11" itemLabel="Noviembre" />
+                                        <f:selectItem itemValue="12" itemLabel="Diciembre" />
+                                    </h:selectOneMenu>
+                                    <h:outputLabel for="filtroMes" value="Mes" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <h:selectOneMenu id="filtroArea" styleClass="form-select" value="#{reportesController.filtroAreaId}">
+                                        <f:selectItem itemValue="#{null}" itemLabel="Todas las áreas" noSelectionOption="true" />
+                                        <f:selectItems value="#{reportesController.areas}" var="area" itemValue="#{area.id}" itemLabel="#{area.nombre}" />
+                                    </h:selectOneMenu>
+                                    <h:outputLabel for="filtroArea" value="Área" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <h:commandButton value="Generar reporte" styleClass="btn btn-primary btn-filter-submit w-100" action="#{reportesController.generar}" />
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-table"></i>
+                    <div>
+                        <h3>Empleados incluidos</h3>
+                        <small class="text-muted">Personal activo considerado en el reporte según el filtro de área.</small>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 system-table">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th class="ps-4">Empleado</th>
+                                    <th>Área</th>
+                                    <th>Cargo</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ui:repeat value="#{reportesController.empleados}" var="empleado">
+                                    <tr>
+                                        <td class="ps-4">
+                                            <strong>#{empleado.nombreCompleto}</strong><br />
+                                            <small class="text-muted">#{empleado.codigoEmpleado}</small>
+                                        </td>
+                                        <td>#{empleado.area.nombre}</td>
+                                        <td>#{empleado.cargo.nombre}</td>
+                                        <td><span class="badge bg-success">Activo</span></td>
+                                    </tr>
+                                </ui:repeat>
+                                <h:panelGroup rendered="#{empty reportesController.empleados}">
+                                    <tr><td colspan="4" class="text-center text-muted py-4">No hay empleados para el filtro seleccionado.</td></tr>
+                                </h:panelGroup>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </ui:define>
+</ui:composition>

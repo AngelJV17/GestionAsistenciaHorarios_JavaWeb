@@ -1,0 +1,318 @@
+﻿<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Programación de Horarios | Hospital Félix Mayorca Soto</ui:define>
+
+    <ui:define name="estilos_propios">
+        <style>
+            .schedule-rest-picker {
+                padding: .9rem;
+                border: 1px solid #dbe7f6;
+                border-radius: 8px;
+                background: #f8fbff;
+            }
+            .schedule-rest-options table,
+            .schedule-rest-options tbody,
+            .schedule-rest-options tr {
+                display: flex;
+                flex-wrap: wrap;
+                gap: .6rem;
+                margin: 0;
+            }
+            .schedule-rest-options td {
+                display: inline-flex;
+                align-items: center;
+                gap: .35rem;
+                min-height: 38px;
+                padding: .45rem .75rem;
+                border: 1px solid #bfdbfe;
+                border-radius: 999px;
+                background: #fff;
+                color: #0f172a;
+                font-weight: 700;
+            }
+            .schedule-rest-options td:has(input:checked) {
+                border-color: var(--primary-color);
+                background: #eaf6ff;
+                color: var(--primary-color);
+                box-shadow: inset 0 0 0 1px var(--primary-color);
+            }
+            .schedule-rest-options input {
+                margin: 0;
+                accent-color: var(--primary-color);
+            }
+            @media (max-width: 640px) {
+                .schedule-rest-options table,
+                .schedule-rest-options tbody,
+                .schedule-rest-options tr {
+                    display: grid;
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                    width: 100%;
+                }
+                .schedule-rest-options td {
+                    justify-content: flex-start;
+                }
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="module-page">
+            <section class="rounded-3 shadow p-4 mb-4 hero-banner">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-8">
+                        <h1 class="h2 fw-bold mb-2 text-white">
+                            <i class="fas fa-calendar-plus me-2"></i>Programación de Horarios
+                        </h1>
+                        <p class="mb-0 text-white opacity-85">
+                            Asigne turnos base a empleados por rangos de fechas.
+                        </p>
+                    </div>
+                    <div class="col-lg-4">
+                        <h:form>
+                            <div class="hero-actions justify-content-lg-end">
+                                <h:commandLink styleClass="hero-action-btn" action="#{adminHorariosController.cancelarEdicion}">
+                                    <i class="fas fa-plus fs-4"></i>
+                                    <span class="hero-action-btn__text">
+                                        <span class="hero-action-btn__title">Nueva asignación</span>
+                                        <span class="hero-action-btn__subtitle">Limpiar formulario</span>
+                                    </span>
+                                </h:commandLink>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats-grid mb-4" aria-label="Resumen de horarios">
+                <article class="stat-card stat-card-primary bg-white shadow-sm">
+                    <span class="stat-label">Asignaciones</span>
+                    <span class="stat-value">#{adminHorariosController.totalHorarios}</span>
+                    <span class="stat-trend trend-primary">Según filtros actuales</span>
+                </article>
+                <article class="stat-card stat-card-success bg-white shadow-sm">
+                    <span class="stat-label">Empleados activos</span>
+                    <span class="stat-value">#{adminHorariosController.empleados.size()}</span>
+                    <span class="stat-trend trend-success">Disponibles</span>
+                </article>
+                <article class="stat-card stat-card-warning bg-white shadow-sm">
+                    <span class="stat-label">Turnos activos</span>
+                    <span class="stat-value">#{adminHorariosController.turnos.size()}</span>
+                    <span class="stat-trend trend-warning">Catálogo base</span>
+                </article>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-calendar-plus"></i>
+                    <div>
+                        <h3>#{adminHorariosController.modoEdicion ? 'Editar asignación' : 'Nueva asignación'}</h3>
+                        <small class="text-muted">Seleccione empleado, turno y vigencia del horario.</small>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h:form id="horarioForm">
+                        <h:messages globalOnly="false" styleClass="jsf-alert-source d-none" />
+                        <div class="document-upload-layout">
+                            <section class="document-upload-group">
+                                <div class="document-upload-group__title">
+                                    <i class="fas fa-user-doctor"></i>
+                                    <div>
+                                        <h4>Empleado y turno</h4>
+                                        <small class="text-muted">El turno seleccionado será visible en el panel médico.</small>
+                                    </div>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <h:selectOneMenu id="empleadoHorario" styleClass="form-select" value="#{adminHorariosController.empleadoId}" required="true">
+                                                <f:selectItem itemValue="#{null}" itemLabel="Seleccione empleado" noSelectionOption="true" />
+                                                <f:selectItems value="#{adminHorariosController.empleados}" var="empleado" itemValue="#{empleado.id}" itemLabel="#{empleado.nombreCompleto}" />
+                                            </h:selectOneMenu>
+                                            <h:outputLabel for="empleadoHorario" value="Empleado" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <h:selectOneMenu id="turnoHorario" styleClass="form-select" value="#{adminHorariosController.turnoId}" required="true">
+                                                <f:selectItem itemValue="#{null}" itemLabel="Seleccione turno" noSelectionOption="true" />
+                                                <f:selectItems value="#{adminHorariosController.turnos}" var="turno" itemValue="#{turno.id}" itemLabel="#{turno.nombre}" />
+                                            </h:selectOneMenu>
+                                            <h:outputLabel for="turnoHorario" value="Turno" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="document-upload-group">
+                                <div class="document-upload-group__title">
+                                    <i class="fas fa-calendar-days"></i>
+                                    <div>
+                                        <h4>Vigencia</h4>
+                                        <small class="text-muted">Defina desde cuándo y hasta cuándo aplica el turno.</small>
+                                    </div>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <h:inputText id="fechaInicio" styleClass="form-control" value="#{adminHorariosController.fechaInicio}" p:type="date" required="true" />
+                                            <h:outputLabel for="fechaInicio" value="Fecha inicio" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <h:inputText id="fechaFin" styleClass="form-control" value="#{adminHorariosController.fechaFin}" p:type="date" required="true" />
+                                            <h:outputLabel for="fechaFin" value="Fecha fin" />
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold text-primary">Días de descanso</label>
+                                        <div class="schedule-rest-picker">
+                                            <h:selectManyCheckbox id="diasDescanso"
+                                                                  value="#{adminHorariosController.diasDescansoSeleccionados}"
+                                                                  layout="lineDirection"
+                                                                  styleClass="schedule-rest-options">
+                                                <f:selectItems value="#{adminHorariosController.opcionesDiasDescanso}" />
+                                            </h:selectManyCheckbox>
+                                        </div>
+                                        <small class="text-muted">Marque los días en los que el empleado no debe registrar asistencia.</small>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-floating">
+                                            <h:inputTextarea id="observacion" styleClass="form-control" value="#{adminHorariosController.observacion}" p:placeholder="Observación" />
+                                            <h:outputLabel for="observacion" value="Observación" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <h:commandButton value="Cancelar" styleClass="btn btn-outline-primary" action="#{adminHorariosController.cancelarEdicion}" rendered="#{adminHorariosController.modoEdicion}" />
+                            <h:commandButton value="#{adminHorariosController.modoEdicion ? 'Actualizar horario' : 'Asignar horario'}" styleClass="btn btn-primary" action="#{adminHorariosController.guardarHorario}" />
+                        </div>
+                    </h:form>
+                </div>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white mb-4">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-filter"></i>
+                    <div>
+                        <h3>Filtros de búsqueda</h3>
+                        <small class="text-muted">Ubique asignaciones por empleado, turno u observación.</small>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h:form id="filtrosHorariosForm">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4">
+                                <div class="form-floating">
+                                    <h:selectOneMenu id="filtroEmpleado" styleClass="form-select" value="#{adminHorariosController.filtroEmpleadoId}">
+                                        <f:selectItem itemValue="#{null}" itemLabel="Todos los empleados" noSelectionOption="true" />
+                                        <f:selectItems value="#{adminHorariosController.empleados}" var="empleado" itemValue="#{empleado.id}" itemLabel="#{empleado.nombreCompleto}" />
+                                    </h:selectOneMenu>
+                                    <h:outputLabel for="filtroEmpleado" value="Empleado" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-floating">
+                                    <h:selectOneMenu id="filtroTurno" styleClass="form-select" value="#{adminHorariosController.filtroTurnoId}">
+                                        <f:selectItem itemValue="#{null}" itemLabel="Todos los turnos" noSelectionOption="true" />
+                                        <f:selectItems value="#{adminHorariosController.turnos}" var="turno" itemValue="#{turno.id}" itemLabel="#{turno.nombre}" />
+                                    </h:selectOneMenu>
+                                    <h:outputLabel for="filtroTurno" value="Turno" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-floating">
+                                    <h:inputText id="busqueda" styleClass="form-control" value="#{adminHorariosController.busqueda}" p:placeholder="Buscar..." />
+                                    <h:outputLabel for="busqueda" value="Buscar" />
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <h:commandButton value="Filtrar" styleClass="btn btn-primary w-100" action="#{adminHorariosController.filtrar}" />
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </section>
+
+            <section class="card card-lift border-0 shadow bg-white">
+                <div class="card__header px-4 pt-4">
+                    <i class="fas fa-calendar-check"></i>
+                    <div>
+                        <h3>Asignaciones registradas</h3>
+                        <small class="text-muted">Los horarios activos se muestran automáticamente en el panel del médico.</small>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <h:form id="tablaHorariosForm">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0 system-table">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th class="ps-4">Empleado</th>
+                                        <th>Turno</th>
+                                        <th>Horario</th>
+                                        <th>Vigencia</th>
+                                        <th>Descanso</th>
+                                        <th>Observación</th>
+                                        <th class="text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <ui:repeat value="#{adminHorariosController.horarios}" var="horario">
+                                        <tr>
+                                            <td class="ps-4">
+                                                <strong>#{adminHorariosController.obtenerEmpleadoNombre(horario.empleadoId)}</strong>
+                                            </td>
+                                            <td><strong>#{horario.turno.nombre}</strong></td>
+                                            <td>#{horario.turno.horaInicio} - #{horario.turno.horaFin}</td>
+                                            <td>#{adminHorariosController.formatearRango(horario)}</td>
+                                            <td class="system-table-text">#{adminHorariosController.formatearDiasDescanso(horario)}</td>
+                                            <td class="system-table-text">#{empty horario.observacion ? 'Sin observación' : horario.observacion}</td>
+                                            <td class="text-center">
+                                                <div class="table-actions">
+                                                    <h:commandLink styleClass="table-action-btn table-action-btn--primary" title="Editar" action="#{adminHorariosController.editarHorario(horario.id)}">
+                                                        <i class="fas fa-pen-to-square"></i>
+                                                    </h:commandLink>
+                                                    <h:commandLink styleClass="table-action-btn table-action-btn--danger" title="Eliminar" action="#{adminHorariosController.eliminarHorario(horario.id)}" onclick="return confirmarAccionEliminacion(this);">
+                                                        <f:passThroughAttribute name="data-confirm-title" value="¿Eliminar asignación?" />
+                                                        <f:passThroughAttribute name="data-confirm-text" value="Se retirará el horario asignado al empleado." />
+                                                        <i class="fas fa-trash"></i>
+                                                    </h:commandLink>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </ui:repeat>
+                                    <h:panelGroup rendered="#{empty adminHorariosController.horarios}">
+                                        <tr><td colspan="7" class="text-center text-muted py-4">No hay horarios asignados.</td></tr>
+                                    </h:panelGroup>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 px-4 py-3 border-top">
+                            <small class="text-muted">Total: #{adminHorariosController.totalHorarios} registros</small>
+                            <nav aria-label="Paginación de horarios">
+                                <ul class="pagination pagination-sm mb-0">
+                                    <ui:repeat value="#{adminHorariosController.paginas}" var="pagina">
+                                        <li class="#{pagina eq adminHorariosController.pagina ? 'page-item active' : 'page-item'}">
+                                            <h:commandLink styleClass="page-link" value="#{pagina}" action="#{adminHorariosController.irPagina(pagina)}" />
+                                        </li>
+                                    </ui:repeat>
+                                </ul>
+                            </nav>
+                        </div>
+                    </h:form>
+                </div>
+            </section>
+        </div>
+    </ui:define>
+</ui:composition>
+

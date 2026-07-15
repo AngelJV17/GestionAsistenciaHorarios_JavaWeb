@@ -1,0 +1,321 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Registro de Asistencias | Hospital Félix Mayorca Soto</ui:define>
+    <ui:define name="content">
+        <div class="module-page">
+            <section class="rounded-3 shadow p-4 mb-4 hero-banner">
+                <div class="row align-items-center g-3">
+                    <div class="col-lg-8">
+                        <h1 class="h2 fw-bold mb-2 text-white">
+                            <i class="fas fa-calendar-check me-2"></i>Registro de Asistencias
+                        </h1>
+                        <p class="mb-0 text-white opacity-85">
+                            Marque su entrada y salida, y consulte su historial mensual.
+                        </p>
+                    </div>
+                    <div class="col-lg-4">
+                        <h:form>
+                            <div class="hero-actions justify-content-lg-end">
+                                <h:commandLink styleClass="hero-action-btn" action="#{medicoAsistenciasController.cargarDatos}">
+                                    <i class="fas fa-sync-alt fs-4"></i>
+                                    <span class="hero-action-btn__text">
+                                        <span class="hero-action-btn__title">Actualizar</span>
+                                        <span class="hero-action-btn__subtitle">Recargar registros</span>
+                                    </span>
+                                </h:commandLink>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </section>
+
+            <h:panelGroup rendered="#{empty medicoAsistenciasController.empleado}">
+                <section class="card card-lift border-0 shadow bg-white">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-user-slash fa-3x text-secondary mb-3"></i>
+                        <h2 class="h4">No hay perfil médico vinculado</h2>
+                        <p class="text-muted mb-0">Solicite al administrador que vincule su usuario con un empleado activo.</p>
+                    </div>
+                </section>
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{not empty medicoAsistenciasController.empleado}">
+                <div class="attendance-workspace">
+                    <aside class="attendance-sidebar">
+                        <section class="card card-lift border-0 shadow bg-white text-center">
+                            <div class="card-body p-4">
+                                <p class="stat-label mb-2">
+                                    <i class="fas fa-satellite-dish text-primary me-1"></i>Reloj en tiempo real
+                                </p>
+                                <div class="reloj-display mb-1" id="relojActual">00:00:00</div>
+                                <div class="fecha-display mb-4" id="fechaActual">Cargando...</div>
+
+                                <h:messages globalOnly="true" styleClass="jsf-alert-source d-none" />
+                                <h:form id="marcacionMedicoForm">
+                                    <h:commandButton value="Registrar entrada"
+                                                     action="#{medicoAsistenciasController.registrarEntrada}"
+                                                     styleClass="btn btn-primary w-100 py-3 mb-2"
+                                                     disabled="#{medicoAsistenciasController.yaRegistroEntrada or empty medicoAsistenciasController.horarioActivo}" />
+                                    <h:commandButton value="Registrar salida"
+                                                     action="#{medicoAsistenciasController.registrarSalida}"
+                                                     styleClass="btn btn-outline-primary w-100 py-3 mb-2"
+                                                     disabled="#{not medicoAsistenciasController.yaRegistroEntrada or medicoAsistenciasController.yaRegistroSalida or empty medicoAsistenciasController.horarioActivo}" />
+                                </h:form>
+
+                                <div class="alert #{medicoAsistenciasController.yaRegistroSalida ? 'alert-success' : 'alert-info'} py-2 mb-0 small fw-semibold">
+                                    <i class="fas #{medicoAsistenciasController.yaRegistroSalida ? 'fa-check-double' : 'fa-clock'} me-1"></i>
+                                    #{medicoAsistenciasController.yaRegistroSalida ? 'Jornada completada' : medicoAsistenciasController.turnoActivoHorario}
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="card card-lift border-0 shadow bg-white">
+                            <div class="card__header px-4 pt-4">
+                                <i class="fas fa-chart-bar"></i>
+                                <div>
+                                    <h3>Resumen del mes</h3>
+                                    <small class="text-muted">#{medicoAsistenciasController.mesAnioTexto}</small>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="stats-grid" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+                                    <div class="stat-card stat-card-success">
+                                        <span class="stat-label">Asistencias</span>
+                                        <strong class="stat-value">#{medicoAsistenciasController.totalAsistencias}</strong>
+                                        <span class="stat-trend trend-success">Puntuales</span>
+                                    </div>
+                                    <div class="stat-card stat-card-warning">
+                                        <span class="stat-label">Tardanzas</span>
+                                        <strong class="stat-value">#{medicoAsistenciasController.totalTardanzas}</strong>
+                                        <span class="stat-trend trend-warning">Este mes</span>
+                                    </div>
+                                    <div class="stat-card stat-card-danger">
+                                        <span class="stat-label">Faltas</span>
+                                        <strong class="stat-value">#{medicoAsistenciasController.totalFaltas}</strong>
+                                        <span class="stat-trend trend-danger">Este mes</span>
+                                    </div>
+                                    <div class="stat-card stat-card-primary">
+                                        <span class="stat-label">Días hábiles</span>
+                                        <strong class="stat-value">#{medicoAsistenciasController.diasHabilesRegistrados}</strong>
+                                        <span class="stat-trend trend-primary">Total</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </aside>
+
+                    <section class="medical-main">
+                        <section class="card card-lift border-0 shadow bg-white mb-4">
+                            <div class="card__header px-4 pt-4">
+                                <i class="fas fa-filter"></i>
+                                <div>
+                                    <h3>Periodo mensual</h3>
+                                    <small class="text-muted">Seleccione el mes y año que desea revisar.</small>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <h:form id="filtrosAsistenciaForm">
+                                    <div class="row g-3">
+                                        <div class="col-md-5">
+                                            <div class="form-floating">
+                                                <h:selectOneMenu id="mesFiltro" styleClass="form-select" value="#{medicoAsistenciasController.mesFiltro}">
+                                                    <f:selectItem itemValue="1" itemLabel="Enero" />
+                                                    <f:selectItem itemValue="2" itemLabel="Febrero" />
+                                                    <f:selectItem itemValue="3" itemLabel="Marzo" />
+                                                    <f:selectItem itemValue="4" itemLabel="Abril" />
+                                                    <f:selectItem itemValue="5" itemLabel="Mayo" />
+                                                    <f:selectItem itemValue="6" itemLabel="Junio" />
+                                                    <f:selectItem itemValue="7" itemLabel="Julio" />
+                                                    <f:selectItem itemValue="8" itemLabel="Agosto" />
+                                                    <f:selectItem itemValue="9" itemLabel="Septiembre" />
+                                                    <f:selectItem itemValue="10" itemLabel="Octubre" />
+                                                    <f:selectItem itemValue="11" itemLabel="Noviembre" />
+                                                    <f:selectItem itemValue="12" itemLabel="Diciembre" />
+                                                </h:selectOneMenu>
+                                                <h:outputLabel for="mesFiltro" value="Mes" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-floating">
+                                                <h:inputText id="anioFiltro" styleClass="form-control" value="#{medicoAsistenciasController.anioFiltro}" p:type="number" />
+                                                <h:outputLabel for="anioFiltro" value="Año" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <h:commandLink styleClass="btn btn-primary w-100 d-flex align-items-center justify-content-center"
+                                                           style="height: 3.5rem;"
+                                                           action="#{medicoAsistenciasController.buscar}">
+                                                <i class="fas fa-search me-2"></i>Buscar
+                                            </h:commandLink>
+                                        </div>
+                                    </div>
+                                </h:form>
+                            </div>
+                        </section>
+
+                        <section class="card card-lift border-0 shadow bg-white mb-4">
+                            <div class="card-body">
+                                <ul class="nav nav-tabs attendance-tabs mb-3" id="tabsAsistencia" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="tabHistorial" data-bs-toggle="tab" data-bs-target="#panelHistorial" type="button" role="tab">
+                                            <i class="fas fa-list-ul me-1"></i>Historial
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="tabCalendario" data-bs-toggle="tab" data-bs-target="#panelCalendario" type="button" role="tab">
+                                            <i class="far fa-calendar-alt me-1"></i>Calendario
+                                        </button>
+                                    </li>
+                                </ul>
+
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="panelHistorial" role="tabpanel">
+                                        <div class="attendance-filter-bar mb-3">
+                                            <span class="stat-label mb-0"><i class="fas fa-filter text-primary"></i> Filtrar:</span>
+                                            <button class="btn btn-sm btn-secondary attendance-filter-btn" type="button" data-filter="TODOS">Todas</button>
+                                            <button class="btn btn-sm btn-outline-primary attendance-filter-btn" type="button" data-filter="ASISTIO">Puntuales</button>
+                                            <button class="btn btn-sm btn-outline-primary attendance-filter-btn" type="button" data-filter="TARDANZA">Tardanzas</button>
+                                            <button class="btn btn-sm btn-outline-primary attendance-filter-btn" type="button" data-filter="FALTA">Faltas</button>
+                                        </div>
+
+                                        <div class="table-responsive attendance-table-scroll">
+                                            <table class="table table-hover align-middle mb-0 system-table" id="tablaAsistenciasMedico">
+                                                <thead class="table-primary">
+                                                    <tr>
+                                                        <th>Fecha</th>
+                                                        <th>Entrada</th>
+                                                        <th>Salida</th>
+                                                        <th>Estado</th>
+                                                        <th>Tardanza</th>
+                                                        <th>Horas</th>
+                                                        <th>Acción</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <ui:repeat value="#{medicoAsistenciasController.asistencias}" var="asistencia">
+                                                        <tr class="fila-asistencia"
+                                                            data-fecha="#{asistencia.fechaAsistencia}"
+                                                            data-estado="#{medicoAsistenciasController.obtenerEstadoCodigo(asistencia)}"
+                                                            data-estado-texto="#{medicoAsistenciasController.obtenerEstadoTexto(asistencia)}"
+                                                            data-puede-justificar="#{medicoAsistenciasController.puedeSolicitarJustificacion(asistencia)}"
+                                                            data-justificacion-texto="#{medicoAsistenciasController.obtenerTextoJustificacion(asistencia)}">
+                                                            <td>
+                                                                <span class="attendance-date-cell">
+                                                                    <i class="far fa-calendar text-muted"></i>
+                                                                    #{medicoAsistenciasController.formatearFecha(asistencia.fechaAsistencia)}
+                                                                </span>
+                                                            </td>
+                                                            <td>#{medicoAsistenciasController.formatearHora(asistencia.fechaHoraEntrada)}</td>
+                                                            <td>#{medicoAsistenciasController.formatearHora(asistencia.fechaHoraSalida)}</td>
+                                                            <td>
+                                                                <span class="#{medicoAsistenciasController.obtenerEstadoClase(asistencia)}">
+                                                                    #{medicoAsistenciasController.obtenerEstadoTexto(asistencia)}
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <span class="attendance-duration #{not empty asistencia.minutosTardanza and asistencia.minutosTardanza gt 0 ? 'text-warning fw-bold' : 'text-muted'}">
+                                                                    #{medicoAsistenciasController.formatearDuracionMinutos(asistencia.minutosTardanza)}
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <span class="attendance-hours">
+                                                                    #{medicoAsistenciasController.formatearHorasTrabajadas(asistencia.horasTrabajadas)}
+                                                                </span>
+                                                            </td>
+                                                            <td class="attendance-action-cell">
+                                                                <h:link outcome="/views/medico/solicitudes.xhtml"
+                                                                        styleClass="attachment-open-btn"
+                                                                        rendered="#{medicoAsistenciasController.puedeSolicitarJustificacion(asistencia)}"
+                                                                        title="Justificar incidencia">
+                                                                    <f:param name="fecha" value="#{asistencia.fechaAsistencia}" />
+                                                                    <i class="fas fa-file-signature"></i>
+                                                                    <span>Justificar</span>
+                                                                </h:link>
+                                                                <h:panelGroup rendered="#{not medicoAsistenciasController.puedeSolicitarJustificacion(asistencia) and not empty medicoAsistenciasController.obtenerTextoJustificacion(asistencia)}"
+                                                                              styleClass="badge bg-info text-dark">
+                                                                    #{medicoAsistenciasController.obtenerTextoJustificacion(asistencia)}
+                                                                </h:panelGroup>
+                                                                <h:panelGroup rendered="#{not medicoAsistenciasController.puedeSolicitarJustificacion(asistencia) and empty medicoAsistenciasController.obtenerTextoJustificacion(asistencia)}">
+                                                                    <i class="fas fa-check text-success"></i>
+                                                                </h:panelGroup>
+                                                            </td>
+                                                        </tr>
+                                                    </ui:repeat>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <h:panelGroup rendered="#{empty medicoAsistenciasController.asistencias}">
+                                            <div class="empty-state">
+                                                <i class="fas fa-clipboard-list"></i>
+                                                <h3>No hay registros de asistencia</h3>
+                                                <p>No se encontraron registros para el periodo seleccionado.</p>
+                                            </div>
+                                        </h:panelGroup>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="panelCalendario" role="tabpanel">
+                                        <div class="attendance-calendar-toolbar">
+                                            <div>
+                                                <h3 class="attendance-calendar-title" id="calendarTitle">#{medicoAsistenciasController.mesAnioTexto}</h3>
+                                                <small class="text-muted">Vista mensual de asistencias registradas</small>
+                                            </div>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <button type="button" class="btn btn-secondary" id="calendarMonthMode">Mes</button>
+                                                <button type="button" class="btn btn-outline-secondary" id="calendarListMode">Lista</button>
+                                            </div>
+                                        </div>
+                                        <div id="attendanceCalendar" class="attendance-calendar" data-month="#{medicoAsistenciasController.mesFiltro}" data-year="#{medicoAsistenciasController.anioFiltro}"></div>
+                                        <div id="attendanceCalendarList" class="attendance-calendar-list d-none"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="card card-lift border-0 shadow bg-white">
+                            <div class="card__header px-4 pt-4">
+                                <i class="fas fa-info-circle"></i>
+                                <div>
+                                    <h3>Leyenda de estados</h3>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <!-- LEYENDA DEBAJO DEL CALENDARIO -->
+                                <div class="attendance-calendar-legend">
+                                    <span class="attendance-legend-item">
+                                        <span class="attendance-legend-dot attendance-legend-dot--asistio"></span>
+                                        Asistió
+                                    </span>
+                                    <span class="attendance-legend-item">
+                                        <span class="attendance-legend-dot attendance-legend-dot--tardanza"></span>
+                                        Tardanza
+                                    </span>
+                                    <span class="attendance-legend-item">
+                                        <span class="attendance-legend-dot attendance-legend-dot--falta"></span>
+                                        Falta
+                                    </span>
+                                    <span class="attendance-legend-item">
+                                        <span class="attendance-legend-dot attendance-legend-dot--justificado"></span>
+                                        Justificado
+                                    </span>
+                                    <span class="attendance-legend-item">
+                                        <span class="attendance-legend-dot attendance-legend-dot--vacaciones"></span>
+                                        Vacaciones
+                                    </span>
+                                </div>
+                            </div>
+                        </section>
+                    </section>
+                </div>
+            </h:panelGroup>
+        </div>
+
+        <h:outputScript library="js" name="asistencias.js"/>
+    </ui:define>
+</ui:composition>
